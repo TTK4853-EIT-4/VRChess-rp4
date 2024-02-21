@@ -9,25 +9,20 @@ tick = 0
 
 print(LEDSTRIP_ALT)
 pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
+
+#Bootup sequence LEDs:
+
+for i in range (10):
+    pixels[i] = (255,255,255)
+    sleep(0.1)
+
+
 #Check internet connection 
 
 while tick < 3:
-    if tick == 0:
-        for i in range (10):
-            pixels[randint(0,9)] = (255,0,0)
-            sleep(0.1)
-        for i in range (10):
-            pixels[i] = (0,255,0)
-            sleep(0.1)
-        sleep(0.3)
-        tick = 1
-        
-    if tick == 1:
-        pixels[1] = (0, 0, 255)
-        pixels[2] = (255, 0, 0)
-        sleep(0.3)
-        tick = 3
-    print(tick)
+    sleep(0.3)
+    tick += 1
+  
 
 
 #0 is gone :(
