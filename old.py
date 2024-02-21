@@ -32,12 +32,11 @@ while tick < 100:
 #0 is gone :(
         
 
-pixels[1] = (255, 0, 0)
-pixels[2] = (255, 0, 0)
-pixels[3] = (255, 0, 0)
-pixels[4] = (255, 0, 0)
+pixels.fill((0,0,0))
 
 sleep(1)
 
-pixels[4] = (0, 0, 255)
-pixels[8] = (255, 0, 0)
+
+
+
+exit()
