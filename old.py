@@ -12,7 +12,7 @@ pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
 #Bootup sequence LEDs:
 
-for i in range (10, 0, -1):
+for i in range (9, 0, -1):
     pixels[i] = (255,255,255)
     sleep(0.1)
 
