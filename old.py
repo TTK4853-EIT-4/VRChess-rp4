@@ -3,12 +3,12 @@
 import board
 from time import sleep
 from random import randint
-from pinout import LEDSTRIP
+from pinout import LEDSTRIP_ALT
 import neopixel
-pixels = neopixel.NeoPixel(board.D18, 10)
+pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 tick = 0
 
-print(board.D18)
+
 #Check internet connection 
 
 while True:
