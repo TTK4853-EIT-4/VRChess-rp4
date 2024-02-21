@@ -1,6 +1,7 @@
 ### Pins defined using board pins:
 # NAME          = Board pin  # GPIO# / Other 
 LEDSTRIP        = "BOARD12"  # GPIO18 / PWM0 
+LEDSTRIP_ALT    = 18  # GPIO18
 MOTOR_ENABLE    = "BOARD12"  # GPIO27
 M1IN1           = "BOARD15"  # GPIO22
 M1IN2           = "BOARD16"  # GPIO23
