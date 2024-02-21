@@ -27,6 +27,7 @@ while tick < 100:
         pixels[2] = (255, 0, 0)
         sleep(0.3)
         tick += 1
+    print(tick)
 
 
 #0 is gone :(
