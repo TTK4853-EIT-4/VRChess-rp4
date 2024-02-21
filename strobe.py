@@ -27,39 +27,19 @@ pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
 #Bootup sequence LEDs:
 
-for i in range (9, 0, -1):
-    pixels[i] = (255,255,255)
-    sleep(0.2)
+for i in range (20, 0, -1):
+    if i // 2 == 0:
+        pixels[i] = (255,255,255)
+    else:
+        pixels[i] = (0,0,0)
+    sleep(0.1)
     
 pixels.fill((0,0,0))   
-pixels[9] = (255,255,255) #PWR
+
 
 #Check internet connection:
 #TODO: TEST THIS
 sleep(1)
-
-
-def check_internet():
-    try:
-        res = socket.getaddrinfo('google.com',80)
-        return True
-    except:
-        return False
-    
-if check_internet():
-    print("Connected to internet")
-    wifiLED(1)
-
-else:
-    print("No internet connection")
-    wifiLED(2)
-
-
-
-while tick < 3:
-    sleep(1)
-    tick += 1
-  
 
 
 #0 is gone :(
