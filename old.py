@@ -11,7 +11,7 @@ print(LEDSTRIP_ALT)
 pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 #Check internet connection 
 
-while True:
+while tick < 100:
     if tick // 2 == 0:
         for i in range (10):
             pixels[randint(0,9)] = (255,0,0)
