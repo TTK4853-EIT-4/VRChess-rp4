@@ -7,6 +7,17 @@ import neopixel
 
 tick = 0
 
+def wifi(wifistatus):
+    if wifistatus == 1:
+        pixels[8] = (0,255,0)
+    else:
+        pixels[8] = (255,0,0)
+
+
+
+
+
+
 print(LEDSTRIP_ALT)
 pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
@@ -21,7 +32,8 @@ pixels[9] = (255,255,255) #PWR
 
 #Check internet connection:
 sleep(1)
-pixels[8] = (0,255,0) #WIFI
+wifi(1)
+
 
 while tick < 3:
     sleep(1)
