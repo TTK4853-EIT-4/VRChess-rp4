@@ -9,6 +9,7 @@ import neopixel
 tick = 0
 
 print(board.D18)
+print(board.__dict__)
 print(LEDSTRIP_ALT)
 pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 #Check internet connection 
