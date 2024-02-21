@@ -26,7 +26,7 @@ while tick < 100:
         pixels[1] = (0, 0, 255)
         pixels[2] = (255, 0, 0)
         sleep(0.3)
-        tick = 0
+        tick = += 1
 
 
 #0 is gone :(
