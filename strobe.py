@@ -34,7 +34,10 @@ for i in range (100, 0, -1):
         pixels.fill((0,0,0))
 
     if i % 5 == 0:
-        pixels[1,5] = (0,0,255)
+
+        pixels[5] = (0,0,255)
+        pixels[4] = (0,0,255)
+        
     sleep(0.05)
     
 pixels.fill((0,0,0))   
