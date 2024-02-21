@@ -14,7 +14,7 @@ pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
 for i in range (9, 0, -1):
     pixels[i] = (255,255,255)
-    sleep(0.1)
+    sleep(0.2)
 
 
 #Check internet connection 
