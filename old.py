@@ -11,8 +11,10 @@ tick = 0
 def wifiLED(wifistatus):
     if wifistatus == 1:
         pixels[8] = (0,255,0)
-    else:
+    if wifistatus == 2:
         pixels[8] = (255,0,0)
+    if wifistatus == 0:
+        pixels[8] = (0,0,0)
 
 
 
@@ -34,16 +36,21 @@ pixels[9] = (255,255,255) #PWR
 #Check internet connection:
 sleep(1)
 
-try:
-    url = "https://www.google.com"
-    urllib.urlopen(url)
-    status = "Connected"
-except:
-    status = "Not connected"
-print(status)
-if status == "Connected":
-    # do stuff...
+import socket
+def check_internet():
+    try:
+        res = socket.getaddrinfo('google.com',80)
+        return True
+    except:
+        return False
+    
+if check_internet():
+    print("Connected to internet")
     wifiLED(1)
+
+else:
+    print("No internet connection")
+    wifiLED(2)
 
 
 
