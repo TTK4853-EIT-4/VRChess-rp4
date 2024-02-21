@@ -59,7 +59,7 @@ while tick < 3:
 
 
 
-sleep(1)
+sleep(10)
 print("Done")
 pixels.fill((0,0,0))
 exit()
