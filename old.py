@@ -8,7 +8,7 @@ import neopixel
 pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 tick = 0
 
-
+print(board.D18, LEDSTRIP_ALT)
 #Check internet connection 
 
 while True:
