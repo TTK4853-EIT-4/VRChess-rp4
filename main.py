@@ -1,10 +1,14 @@
+from pinout import LEDSTRIP
+
+
+
 class Superman:
 
     def __init__(self, **kwargs) -> None:
         pass
 
     def __str__(self) -> str:
-        return "SUPERHOT"
+        return LEDSTRIP
     
 def main():
     idk = Superman(jesus_christ="it's jason bours")
