@@ -15,11 +15,13 @@ pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 for i in range (9, 0, -1):
     pixels[i] = (255,255,255)
     sleep(0.2)
-    pixels.fill((0,0,0))
-    pixels[9] = (255,255,255) #PWR
+    
+pixels.fill((0,0,0))   
+pixels[9] = (255,255,255) #PWR
 
-
-#Check internet connection 
+#Check internet connection:
+sleep(1)
+pixels[8] = (0,255,0) #WIFI
 
 while tick < 3:
     sleep(1)
