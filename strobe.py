@@ -27,12 +27,12 @@ pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
 #Bootup sequence LEDs:
 
-for i in range (20, 0, -1):
+for i in range (1000, 0, -1):
     if i % 2 == 0:
         pixels.fill((255,255,255))
     else:
         pixels.fill((0,0,0))
-    sleep(0.1)
+    sleep(0.05)
     
 pixels.fill((0,0,0))   
 
