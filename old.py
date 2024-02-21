@@ -35,8 +35,6 @@ while tick < 100:
 pixels.fill((0,0,0))
 
 sleep(1)
-
-
-
+print("Done")
 
 exit()
