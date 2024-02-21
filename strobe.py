@@ -29,9 +29,9 @@ pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
 for i in range (20, 0, -1):
     if i // 2 == 0:
-        pixels[i] = (255,255,255)
+        pixels.fill((255,255,255))
     else:
-        pixels[i] = (0,0,0)
+        pixels.fill((0,0,0))
     sleep(0.1)
     
 pixels.fill((0,0,0))   
