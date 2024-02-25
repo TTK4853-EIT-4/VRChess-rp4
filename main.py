@@ -1,5 +1,5 @@
 from pinout import LEDSTRIP
-
+from Motion.motioncontroller import MotionController
 
 
     
@@ -9,11 +9,11 @@ def main():
     # MotionCtrl
     # Logging
     # Camera / Comp Vision
-    # 
     
     # Terminology: Server == External opponent
     # User == Physical player
 
+    # Setup Logger
     ########### LOOP:
     # Check for incoming messages
     # (Send outgoing messages?)
@@ -43,6 +43,11 @@ def main():
     #== END FSM
     # Let pcu breathe...
     ########### END LOOP
+    
+    # logger == logging cookbook
+    mctrl = MotionController()
+    # comms = CommunicationController()
+    # camera = CameraController()
     
     " main "
     return
