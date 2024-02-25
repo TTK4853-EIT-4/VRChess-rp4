@@ -16,6 +16,7 @@ END_DET1        = "BOARD18"  # GPIO24
 END_DET2        = "BOARD22"  # GPIO25
 BTN_JOIN        = "BOARD36"  # GPIO16
 BTN_EXTRA       = "BOARD37"  # GPIO26
+EM_ENABLE       = "BOARD19"  # GPIO10 / MOSI0
 
 ### Other pins:
 MISO1           = "BOARD35"  # GPIO19
