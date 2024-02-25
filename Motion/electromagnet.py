@@ -7,7 +7,6 @@ from time import sleep
 class ElectroMagnet:
     def __init__(self) -> None:
         self._output = DigitalOutputDevice(pin=EM_ENABLE, active_high=True, initial_value=False)
-        self.discharge_time = 0
         pass
     
     def activate(self):
@@ -15,10 +14,10 @@ class ElectroMagnet:
         self._output.on()
         return
     
-    def deactivate(self):
+    def deactivate(self, wait=0):
         # disable pins
         self._output.off()
-        sleep(self.discharge_time)
+        sleep(wait)
         return
     
     
