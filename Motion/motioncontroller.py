@@ -1,9 +1,14 @@
 from queue import SimpleQueue, Empty
 from threading import Thread
 from time import time, sleep
+from electromagnet import ElectroMagnet
+from engine import EngineIO
 
 
 # TODO: Stop engine if thread dies due to error
+# TODO: move should encompass: what piece to move (coords), new_position, board
+# TODO: piece location have to be converted to steps needed.
+# TODO: algorithm for choosing path to take
 class MotionController:
     
     def __init__(self) -> None:
@@ -14,6 +19,8 @@ class MotionController:
         self._ctrl_running = False
         self._stop = False
         
+        self._engines = EngineIO()
+        self._electromagnet = ElectroMagnet()
         pass
     
     def __enter__(self):
@@ -21,6 +28,8 @@ class MotionController:
     
     def request_move(self, move):
         # add to queue
+        # move {piece: coords, new_coords}
+        
         self._q_moves.put_nowait(move)
         pass
     
@@ -48,12 +57,32 @@ class MotionController:
             except Empty:
                 pass
             if new_move:
+                old_pos = new_move[0]
+                new_pos = new_move[1]
+                board = new_move[2]
+                # TODO: make sure engines don't move when enabled
+                self._engines.enable()
                 # 1. move to piece position
+                self._engines.move_single(old_pos)
                 # 2. activate electromagnet
+                self._electromagnet.activate()
                 # 3. move to new position (need algorithm?)
+                path = self._get_best_path(old_pos, new_pos, board)
+                self._engines.move_path(path)
                 # 4. deactivate electromagnet
+                self._electromagnet.deactivate(wait=0.1)
                 # 5. return to start position
+                self._engines.reset()  # return to start, poll end detectors.
+                self._engines.disable()
                 pass
             while time() - start_time < wait_time: sleep(wait_time*5)
-        
+        self._ctrl_running = False
+        self._engines.disable()
         return
+    
+    def _get_best_path(self, old_position, new_position, current_board) -> list[list[int]]:
+        # somehow get steps needed for engines.
+        
+        # return: 2D list of moves: [[25, 25], [0, 10], [25, 25]]... '
+        dumy = [[25, 25], [0, 10], [25, 25]]
+        return dumy
