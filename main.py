@@ -1,9 +1,30 @@
 from pinout import LEDSTRIP
 from Motion.motioncontroller import MotionController
-
+import logging
+from time import sleep
 
     
 def main():
+    logger = logging.getLogger("vrcLog")
+    logger.setLevel(logging.DEBUG)
+    
+    fh = logging.FileHandler("logs/debug.log")
+    fh.setLevel(logging.WARNING)
+    
+    console = logging.StreamHandler()
+    console.setLevel(logging.DEBUG)
+    
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(threadName)s - %(levelname)s -| %(message)s")
+    fh.setFormatter(formatter)
+    console.setFormatter(formatter)
+    
+    logger.addHandler(fh)
+    logger.addHandler(console)
+    
+    logger.debug("test")
+    logger.error("fuck")
+    
+    
     # modules:
     # Comms with server
     # MotionCtrl

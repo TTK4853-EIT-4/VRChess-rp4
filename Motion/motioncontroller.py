@@ -1,9 +1,11 @@
 from queue import SimpleQueue, Empty
 from threading import Thread
 from time import time, sleep
-from electromagnet import ElectroMagnet
-from engine import EngineIO
+from Motion.electromagnet import ElectroMagnet
+from Motion.engine import EngineIO
+import logging
 
+mctrl_logger = logging.getLogger("vrcLog.motioncontroller")
 
 # TODO: Stop engine if thread dies due to error
 # TODO: move should encompass: what piece to move (coords), new_position, board
@@ -50,6 +52,7 @@ class MotionController:
     def __Controller__(self):
         wait_time = 1/10  # <1!
         self._ctrl_running = True
+        mctrl_logger.info("MotionController started")
         while not self._stop:
             start_time = time()
             try:
@@ -78,6 +81,7 @@ class MotionController:
             while time() - start_time < wait_time: sleep(wait_time*5)
         self._ctrl_running = False
         self._engines.disable()
+        mctrl_logger.info("MotionController stopped")
         return
     
     def _get_best_path(self, old_position, new_position, current_board) -> list[list[int]]:
@@ -86,3 +90,7 @@ class MotionController:
         # return: 2D list of moves: [[25, 25], [0, 10], [25, 25]]... '
         dumy = [[25, 25], [0, 10], [25, 25]]
         return dumy
+    
+    
+if __name__ == '__main__':
+    pass
