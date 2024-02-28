@@ -70,6 +70,10 @@ def main():
     
     # logger == logging cookbook
     mctrl = MotionController()
+    mctrl.startController()
+    sleep(1)
+    mctrl.stop_controller()
+    sleep(1)
     # comms = CommunicationController()
     # camera = CameraController()
     

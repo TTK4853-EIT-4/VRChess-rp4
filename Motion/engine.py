@@ -22,7 +22,7 @@ class EngineIO:
         self.lower_engine = Engine(PINSET_LOWER, END_DET1)
         self.top_engine = Engine(PINSET_TOP, END_DET2)
         
-        self.enable = DigitalOutputDevice(MOTOR_ENABLE, active_high=True, initial_value=False)
+        self.motor_enable = DigitalOutputDevice(MOTOR_ENABLE, active_high=True, initial_value=False)
         
     
     def move_single(self, path: list[int]):
@@ -39,10 +39,10 @@ class EngineIO:
             self.move_single(move)
             
     def enable(self):
-        self.enable.on()
+        self.motor_enable.on()
         
     def disable(self):
-        self.disable.off()
+        self.motor_enable.off()
         
     def reset(self):
         # no clue

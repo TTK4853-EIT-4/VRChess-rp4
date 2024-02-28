@@ -41,6 +41,7 @@ class MotionController:
             # connect and stuff...
             self._stop = False
             self._movement_thread = Thread(target=self.__Controller__)
+            self._movement_thread.start()
         else:
             pass
         
@@ -54,6 +55,7 @@ class MotionController:
         self._ctrl_running = True
         mctrl_logger.info("MotionController started")
         while not self._stop:
+            new_move = False
             start_time = time()
             try:
                 new_move = self._q_moves.get_nowait()
