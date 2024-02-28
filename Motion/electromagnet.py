@@ -1,5 +1,11 @@
 from pinout import EM_ENABLE
-from gpiozero import DigitalOutputDevice
+from isrp4 import is_raspberrypi
+if is_raspberrypi():
+    from gpiozero import DigitalOutputDevice
+else:
+    import os
+    os.environ['GPIOZERO_PIN_FACTORY'] = os.environ.get('GPIOZERO_PIN_FACTORY', 'mock')
+    from gpiozero import DigitalOutputDevice
 from time import sleep
 
 

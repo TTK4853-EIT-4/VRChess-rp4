@@ -1,4 +1,9 @@
-import board
+try:
+    import board
+    board.D18
+except:  # workaround for testing on laptop; Prerequisites are adafruit_blinka and RPi.GPIO.
+    class board:
+        D18 = 18
 ### Pins defined using board pins:
 # NAME          = Board pin  # GPIO# / Other 
 LEDSTRIP        = "BOARD12"  # GPIO18 / PWM0 

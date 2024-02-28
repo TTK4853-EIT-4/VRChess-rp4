@@ -1,8 +1,15 @@
 from typing import Any
 from pinout import MOTOR_ENABLE, M1IN1, M1IN2, M1IN3, M1IN4, M2IN1, M2IN2, M2IN3, M2IN4
 from pinout import END_DET1, END_DET2
-from gpiozero import DigitalOutputDevice
-from gpiozero import Button
+
+from isrp4 import is_raspberrypi
+if is_raspberrypi():
+    from gpiozero import DigitalOutputDevice
+else:
+    import os
+    os.environ['GPIOZERO_PIN_FACTORY'] = os.environ.get('GPIOZERO_PIN_FACTORY', 'mock')
+    from gpiozero import DigitalOutputDevice, Button
+
 from time import sleep
 
 PINSET_LOWER = [M1IN1, M1IN2, M1IN3, M1IN4]
@@ -61,8 +68,8 @@ class Engine:
         
         self._end_detected = False
         self._endstop_detection = Button(endstop)
-        self._endstop_detection.when_activated(self._at_endstop)
-        self._endstop_detection.when_deactivated(self._not_at_endstop)
+        self._endstop_detection.when_activated = self._at_endstop
+        self._endstop_detection.when_deactivated = self._not_at_endstop
     
     def move(self, steps: int):
         # set pins for direction or something..'
