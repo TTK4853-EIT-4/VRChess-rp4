@@ -87,12 +87,41 @@ class MotionController:
         return
     
     def _get_best_path(self, old_position, new_position, current_board) -> list[list[int]]:
-        # somehow get steps needed for engines.
+        # somehow get steps needited for engines.
+        # Rx old_pos and new_pos. New_pos can be graveyard.
         
         # return: 2D list of moves: [[25, 25], [0, 10], [25, 25]]... '
         dumy = [[25, 25], [0, 10], [25, 25]]
         return dumy
     
     
+class Graveyard:
+    def __init__(self, number_of_positions) -> None:
+        self.graveyard = ["" for _ in range(number_of_positions+10)]
+        self.graveyard_index = {}
+        self._i = 0
+
+    def add_piece(self, piece):
+        self.graveyard[self._i] = piece
+        self.graveyard_index[piece] = self._i
+        self._i += 1
+    
+    def reset(self):
+        self.graveyard = ["" for _ in range(len(self.graveyard))]
+        self._i = 0
+        self.graveyard_index = {}
+        
+    def pop_by_piece(self, piece):
+        index = self.graveyard_index[piece]
+        self.graveyard[index] = ""
+        self.graveyard_index.pop(piece)
+        return index
+        
+    def pop_by_index(self, index):
+        piece = self.graveyard[index]
+        self.graveyard[index] = ""
+        self.graveyard_index.pop(piece)
+        return piece
+        
 if __name__ == '__main__':
     pass
