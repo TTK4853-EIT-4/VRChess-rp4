@@ -5,6 +5,7 @@ from time import sleep
 
     
 def main():
+    # setup log
     logger = logging.getLogger("vrcLog")
     logger.setLevel(logging.DEBUG)
     
@@ -20,6 +21,8 @@ def main():
     
     logger.addHandler(fh)
     logger.addHandler(console)
+    
+    # acquire log in modules på calling getLogger(vrcLog.module)
     
     logger.debug("test")
     logger.error("fuck")
