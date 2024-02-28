@@ -2,7 +2,7 @@ from typing import Any
 from pinout import MOTOR_ENABLE, M1IN1, M1IN2, M1IN3, M1IN4, M2IN1, M2IN2, M2IN3, M2IN4
 from pinout import END_DET1, END_DET2
 
-from isrp4 import is_raspberrypi
+from auxilliary.isrp4 import is_raspberrypi
 if is_raspberrypi():
     from gpiozero import DigitalOutputDevice
 else:
@@ -19,6 +19,8 @@ PINSET_TOP = [M2IN1, M2IN2, M2IN3, M2IN4]
 # TODO: somehow wait for move to finish, approximate time?
 class EngineIO:
     def __init__(self) -> None:
+        self.STEP_LENGTH = 0.01
+        
         self.lower_engine = Engine(PINSET_LOWER, END_DET1)
         self.top_engine = Engine(PINSET_TOP, END_DET2)
         

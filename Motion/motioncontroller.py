@@ -4,6 +4,7 @@ from time import time, sleep
 from Motion.electromagnet import ElectroMagnet
 from Motion.engine import EngineIO
 import logging
+import chess
 
 mctrl_logger = logging.getLogger("vrcLog.motioncontroller")
 
@@ -23,6 +24,7 @@ class MotionController:
         
         self._engines = EngineIO()
         self._electromagnet = ElectroMagnet()
+        self._grave = Graveyard(16)
         pass
     
     def __enter__(self):
@@ -62,9 +64,10 @@ class MotionController:
             except Empty:
                 pass
             if new_move:
-                old_pos = new_move[0]
-                new_pos = new_move[1]
-                board = new_move[2]
+                piece = new_move[0]
+                old_pos = new_move[1]
+                new_pos = new_move[2]
+                board = new_move[3]
                 # TODO: make sure engines don't move when enabled
                 self._engines.enable()
                 # 1. move to piece position
@@ -72,7 +75,7 @@ class MotionController:
                 # 2. activate electromagnet
                 self._electromagnet.activate()
                 # 3. move to new position (need algorithm?)
-                path = self._get_best_path(old_pos, new_pos, board)
+                path = self._get_best_path(piece, old_pos, new_pos, board)
                 self._engines.move_path(path)
                 # 4. deactivate electromagnet
                 self._electromagnet.deactivate(wait=0.1)
@@ -86,9 +89,18 @@ class MotionController:
         mctrl_logger.info("MotionController stopped")
         return
     
-    def _get_best_path(self, old_position, new_position, current_board) -> list[list[int]]:
+    def _get_best_path(self, piece, old_position, new_position, current_board) -> list[list[int]]:
         # somehow get steps needited for engines.
         # Rx old_pos and new_pos. New_pos can be graveyard.
+        step_length = self._engines.STEP_LENGTH  # currently 1 cm
+        square_side_length = 0.05  # 5 cm
+        
+        
+        
+        if new_position == "graveyard":
+            grave_index = self._grave.add_piece(piece)
+        
+        
         
         # return: 2D list of moves: [[25, 25], [0, 10], [25, 25]]... '
         dumy = [[25, 25], [0, 10], [25, 25]]
@@ -105,6 +117,7 @@ class Graveyard:
         self.graveyard[self._i] = piece
         self.graveyard_index[piece] = self._i
         self._i += 1
+        return self._i - 1
     
     def reset(self):
         self.graveyard = ["" for _ in range(len(self.graveyard))]
