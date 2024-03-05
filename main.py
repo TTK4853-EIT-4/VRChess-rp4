@@ -2,10 +2,10 @@ from pinout import LEDSTRIP
 from Motion.motioncontroller import MotionController
 import logging
 from time import sleep
-
+    
     
 def main():
-    # setup log
+    # setup logit
     logger = logging.getLogger("vrcLog")
     logger.setLevel(logging.DEBUG)
     
@@ -70,6 +70,10 @@ def main():
     
     # logger == logging cookbook
     mctrl = MotionController()
+    mctrl.startController()
+    sleep(1)
+    mctrl.stop_controller()
+    sleep(1)
     # comms = CommunicationController()
     # camera = CameraController()
     

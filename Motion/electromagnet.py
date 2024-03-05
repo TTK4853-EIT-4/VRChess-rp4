@@ -1,5 +1,5 @@
 from pinout import EM_ENABLE
-from isrp4 import is_raspberrypi
+from auxilliary.isrp4 import is_raspberrypi
 if is_raspberrypi():
     from gpiozero import DigitalOutputDevice
 else:
