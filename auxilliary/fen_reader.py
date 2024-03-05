@@ -38,46 +38,50 @@ def parse_fen(chess_fen: str):
 ########################## PATH:
 
 # Move identifiers
+NORMAL = "normal"
 HORSE = "horse"
 CASTLING = "castling"
 GRAVEYARD = "graveyard"
 D2G = "distance2graveyard"
 
+# Board frame
 COLUMN = ["@", "A", "B", "C", "D", "E", "F", "G", "H", "I"]
 ROW = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 COLUMN_OFFSET = 1
 ROW_OFFSET = 2
+# Edge frame 
+E_COLUMN = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+E_ROW = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
-#COLUMN = ["A", "B", "C", "D", "E", "F", "G", "H"]
-#ROW = [1, 2, 3, 4, 5, 6, 7, 8]
 
-def check_for_open_path(board: str, old_pos: str, new_pos: str):
-    """Check if there is an open path from current position to new position.
+def get_path(board: str, old_pos: str, new_pos: str, move_type: str):
+    """Return a path from old position to new position. Move_type=='normal' will assume path is open.
+    Move_type == 'horse', 'castling' or 'graveyard' will assume a path is blocked, and will return a path along the edges.
 
     Args:
         board (str): FEN string, board part.
         old_pos (str): Typically G5 or g5
         new_pos (str): Typically G5 or g5
+        move_type (str): normal, horse, castling or graveyard
 
     Returns:
-        _type_: _description_
+        list[tuple[int, int] | str]: Path
     """
-    open_path = []
+    path = []
     old_pos = old_pos
     new_pos = new_pos
     
     old_coord = position_to_coords(old_pos)
     new_coord = position_to_coords(new_pos)
     
-    special_move = False
     min_dist, is_diagonal = get_open_distance(old_coord, new_coord)
     # Normal move:
-    if not special_move:
-        path = get_direct_path(old_pos, new_pos, is_diagonal)
-    elif special_move:
-        path = get_displaced_path(old_pos, new_pos)
-    return open_path
+    if move_type == NORMAL:
+        path = get_direct_path(old_coord, new_coord, is_diagonal)
+    elif HORSE or CASTLING or GRAVEYARD:
+        path = get_displaced_path(old_coord, new_coord, move_type)
+    return path
 
 
 def get_direct_path(old_coord: tuple[int, int], new_coord: tuple[int, int], is_diagonal: bool):
@@ -92,6 +96,8 @@ def get_direct_path(old_coord: tuple[int, int], new_coord: tuple[int, int], is_d
     Returns:
         _type_: _description_
     """
+    letters = []
+    numbers = []
     if is_diagonal:
         letters = [COLUMN[i] for i in range(old_coord[0], new_coord[0])]
         numbers = [ROW[i]-ROW_OFFSET+1 for i in range(old_coord[1], new_coord[1])]
@@ -114,56 +120,96 @@ def get_displaced_path(old_coord: tuple[int, int], new_coord: tuple[int, int] | 
     # Line defined as: B5B6, the line between B5 and B6.
     # Edge case: B8B9, the line between B6 and out of bounds.
     old_pos = coords_to_position(old_coord)
-    new_pos = coords_to_position(new_pos)
+    new_pos = coords_to_position(new_coord)
     
     if special_identifier == GRAVEYARD:  # either old or new is in graveyard. Old if pawn switch to new piece
         # TODO:
         # find path to edge
+        first_edge = start_edgerun(old_coord, new_coord)
+        last_edge = start_edgerun(new_coord, old_coord)
+        edge_path = straight_edgerun(first_edge, last_edge)
         # add distance 2 graveyard when passing over "@" or "I".
-        # find path to spot
-        
-        
+        edge_path = add_graveyard_jump(edge_path)
+        enter_pos = end_edgerun(new_coord)
         # Path will look somewhat like: [2Edge, edge1, edge2, edge3, dist2grave, edge3, 2Spot]
-        
+        path = [first_edge] + edge_path + [enter_pos] # TODO want first edge?
         print("The piece was yoted")
-        
     # horse and castling is the same in the eyes of this algo....
     elif special_identifier == HORSE or special_identifier == CASTLING:  # new_pos is actual location
-        pass
-    path = ""
+        first_edge = start_edgerun(old_coord, new_coord)
+        last_edge = start_edgerun(new_coord, old_coord)
+        edge_path = straight_edgerun(first_edge, last_edge)
+        enter_pos = end_edgerun(new_coord)
+        path = [first_edge] + edge_path + [enter_pos]
     return path
 
 
-def start_edgerun(start_coord, end_coord):
+def start_edgerun(start_coord, end_coord) -> tuple[int, int]:  # 1. Find corner
     """Find the best edgepoint to start at.
     Assume that best start point is always closest to end point
 
     Returns:
-        _type_: _description_
+        tuple[int, int]: edge in edge-frame
     """
     dx = abs(start_coord[0] - end_coord[0])
     dy = abs(start_coord[1] - end_coord[1])
     edge = []
-    if dx >= dy:  # prioritize horizontal
-        if start_coord[1] - end_coord[1] >= 0: # end lower
-            # "move to upper edge"
-            up = (start_coord[0], start_coord[1]+1)
-            edge = [start_coord, up]
-        elif start_coord[1] - end_coord[1] < 0: # end higher
-            # "move to lower edge"
-            down = (start_coord[0], start_coord[1]-1)
-            edge = [start_coord, down]
-    else:  # prioritize vertical
-        if start_coord[0] - end_coord[0] >= 0: # end left
-            # "move to left edge"
-            left = (start_coord[0]-1, start_coord[1])
-            edge = [start_coord, left]
-        elif start_coord[0] - end_coord[0] < 0: # end right
-            # "move to right edge"
-            right = (start_coord[0]+1, start_coord[1])
-            edge = [start_coord, right]
+    if dy >= 0 and dx >= 0: # top left
+        direction = "tl"
+    elif dy >= 0 and dx < 0: # top right
+        direction = "tr"
+    elif dy < 0 and dx >= 0: # bot left
+        direction = "bl"
+    elif dy < 0 and dx < 0: # bot right
+        direction = "br"
+    edge = b2e_frame(start_coord, direction=direction)
     return edge
+    
+def straight_edgerun(start_edge: tuple[int, int], end_edge: tuple[int, int]):  # 2 and 3. find straights.
+    """Returns the path along the edges. Does not handle D2G.
+
+    Args:
+        start_edge (tuple[int, int]):
+        end_edge (tuple[int, int]):
+
+    Returns:
+        list of edges
+    """
+    # Get a straight
+    dx = abs(start_edge[0] - end_edge[0])
+    sgnx = int((-start_edge[0]+end_edge[0])/dx)
+    dy = abs(start_edge[1] - end_edge[1])
+    sgny = int((-start_edge[1]+end_edge[1])/dy)
+    
+    def move_dir(start_edge, dx, sgnx, dy, sgny, dirn):
+        if dirn: #x (letters)
+            path = [(start_edge[0]+i*sgnx, start_edge[1]) for i in range(1, dx + 1)]
+        else: #y
+            path = [(start_edge[0], start_edge[1]+i*sgny) for i in range(1, dy + 1)]    
+        return path
+    
+    if dx >= dy: # choose to move dy first
+        path_gen = [0, 1]
+    else: # choose to move dx first
+        path_gen = [1, 0]
+    path1 = move_dir(start_edge, dx, sgnx, dy, sgny, path_gen[0])
+    path2 = move_dir(path1[-1], dx, sgnx, dy, sgny, path_gen[1])
+    return path1 + path2
+
+# Add D2G if applicable
+def add_graveyard_jump(path: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    new_path = path
+    for i in range(len(path)-1):
+        if (path[i][0] == 1 and path[i+1][0] == 2) or \
+            (path[i][0] == 2 and path[i+1][0] == 1) or \
+            (path[i][0] == 10 and path[i+1][0] == 11) or \
+            (path[i][0] == 11 and path[i+1][0] == 10):
+            new_path = new_path[:i] + [D2G] + new_path[i:]
+    return new_path
+    
         
+def end_edgerun(new_coord):  # exit edge
+    return new_coord
     
     
 
@@ -181,7 +227,7 @@ def position_to_coords(pos: str):
 
 
 def coords_to_position(coord: tuple[int, int]):
-    col = chr(coord[0]-1- COLUMN_OFFSET)
+    col = chr(coord[0]+ord('A')-1- COLUMN_OFFSET)
     row = coord[1] - ROW_OFFSET
     return col + repr(row)
     
@@ -195,13 +241,32 @@ def get_open_distance(coord1, coord2) -> tuple[int, bool]:
         total = dx
         diagonal = True
     return total, diagonal
+
+
+def b2e_frame(b_coord: tuple[int, int], direction: str):
+    c_ofs = 0
+    r_ofs = 0
+    if direction == "tl":
+        c_ofs = 0
+        r_ofs = 1
+    elif direction == "tr":
+        c_ofs = 1
+        r_ofs = 1
+    elif direction == "bl":
+        c_ofs = 0
+        r_ofs = 0
+    elif direction == "br":
+        c_ofs = 1
+        r_ofs = 0
+    return (b_coord[0]+c_ofs, b_coord[1]+r_ofs)
+
     
 ############## END PATH
     
-    
+# BOARD FRAME:   
 #        |d| : distance between board and grave       
 #   Grave|d|Board for drawing "edges"|d|    
-#    0 1  2 3 4 5 6 7 8 9 10 11 12 13
+#   -1 0  1 2 3 4 5 6 7 8 9 10 11
 #    > ?  @ A B C D E F G H  I  J  K
 #         9 
 #         8 
@@ -214,3 +279,28 @@ def get_open_distance(coord1, coord2) -> tuple[int, bool]:
 #         1 
 #         0 
 #   
+# EDGE FRAME:    
+#   -1 0 1 | 2 3 4 5 6 7 8 9 0 | 1 2 3 
+#          0
+#          9 
+#          8 
+#          7 
+#          6 
+#          5 
+#          4 
+#          3 
+#          2 
+#          1 
+#          0 
+#
+
+if __name__ == '__main__':
+    p = get_path("", "B3", "?7", move_type=GRAVEYARD)
+    print(p)
+    
+    p = get_path("", "?7", "B3", move_type=GRAVEYARD)
+    print(p)
+    
+    p = get_path("", ">2", "J7", move_type=GRAVEYARD)
+    print(p)
+    

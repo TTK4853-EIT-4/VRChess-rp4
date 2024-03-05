@@ -95,6 +95,9 @@ class MotionController:
         step_length = self._engines.STEP_LENGTH  # currently 1 cm
         square_side_length = 0.05  # 5 cm
         
+        # TODO: Figure out if special move
+        # TODO: Run corresponding path algo
+        # TODO: Calculate steps
         
         
         if new_position == "graveyard":
