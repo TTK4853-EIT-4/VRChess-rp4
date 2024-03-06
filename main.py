@@ -1,3 +1,4 @@
+from Network.network import WebSocketController
 from pinout import LEDSTRIP
 from Motion.motioncontroller import MotionController
 import logging
@@ -47,6 +48,8 @@ def main():
     #   Setup internet connection and threads...
     #   Enter Wait for user input
     #
+    ws = WebSocketController()
+    ws.run()
     ### State: Wait for user input:
     #   Wait for user input...
     # 
