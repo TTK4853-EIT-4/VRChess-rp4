@@ -9,7 +9,7 @@ import neopixel
 
 tick = 0
 
-def wifiLED(wifistatus):
+def wifiLED(pixels: neopixel.Neopixel, wifistatus: int):
     if wifistatus == 1:
         pixels[8] = (0,255,0)
     if wifistatus == 2:
@@ -18,29 +18,28 @@ def wifiLED(wifistatus):
         pixels[8] = (0,0,0)
 
 
+def boot_led(pixels: neopixel.Neopixel):
+    for i in range (100, 0, -1):
+        if i % 2 == 0:
+            pixels.fill((255,255,255))
+        if i % 2 == 1:
+            pixels.fill((0,0,0))
+
+        if i % 5 == 0:
+
+            pixels[5] = (0,0,255)
+            pixels[4] = (0,0,255)
+            
+        sleep(0.05)
+        
+    pixels.fill((0,0,0))   
 
 
-
-
-print(LEDSTRIP_ALT)
 pixels = neopixel.NeoPixel(LEDSTRIP_ALT, 10)
 
 #Bootup sequence LEDs:
+boot_led(pixels)
 
-for i in range (100, 0, -1):
-    if i % 2 == 0:
-        pixels.fill((255,255,255))
-    if i % 2 == 1:
-        pixels.fill((0,0,0))
-
-    if i % 5 == 0:
-
-        pixels[5] = (0,0,255)
-        pixels[4] = (0,0,255)
-        
-    sleep(0.05)
-    
-pixels.fill((0,0,0))   
 
 
 #Check internet connection:
