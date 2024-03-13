@@ -4,7 +4,7 @@ from time import sleep
     
 from Network.network import WebSocketController
 from Motion.motioncontroller import MotionController
-from auxilliary import boardIO
+from auxilliary.boardIO import BoardIO
 import Fsm.fsm as fsm
     
 def main():
@@ -33,26 +33,36 @@ def main():
     
     # modules:
     ws = WebSocketController()
-    ws.run()
+    # ws.run()
     mctrl = MotionController()
     mctrl.startController()
-    bio = boardIO.BoardIO()
+    bio = BoardIO()
     state_machine = fsm.FSM(state=fsm.states.INITIALIZE)
     
-    state_machine, bio = fsm.initialize(state_machine, bio)
-    # Comms with server
-    # MotionCtrl
-    # Logging
-    # Camera / Comp Vision
     
-    while True:
-        if bio.started():
-            ws.login('board_player_1', 'board_pwd')
-        elif bio.extraed():
-            ws.login('board_player_1', 'board_pwd', 'board_player_2', ws.BOARD_MULTI_PLAYER)
-        elif ws.game_over:
-            break
+    i=0
+    test_limit = 500
+    while i<test_limit:
+        print(i)
+        if state_machine == fsm.states.INITIALIZE:
+            state_machine, bio = fsm.initialize(state_machine, bio)
+        
+        elif state_machine == fsm.states.WAIT_FOR_SERVER_CONNECTION:
+            pass
+        
+        elif state_machine == fsm.states.WAIT_FOR_USER_INPUT:
+            state_machine, bio = fsm.wait_for_user_input(fsm, bio)
+        
+        elif state_machine == fsm.states.WAIT_FOR_SERVER_MOVE:
+            pass
+        
+        elif state_machine == fsm.states.WAIT_FOR_USER_MOVE:
+            state_machine = fsm.wait_for_user_move(fsm)
+        
+        elif state_machine == fsm.states.FINISHED:
+            pass
     
+        i+=1
     # logger == logging cookbook
     sleep(1)
     mctrl.stop_controller()

@@ -48,6 +48,7 @@ class states(Enum):
     WAIT_FOR_USER_INPUT = 2
     WAIT_FOR_SERVER_MOVE = 3  # Not need in minimal goal
     WAIT_FOR_USER_MOVE = 4  # only operation state in minimal goal
+    FINISHED = 5
     
 @dataclass(init=True,eq=True)
 class FSM():

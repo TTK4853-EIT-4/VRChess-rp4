@@ -26,6 +26,30 @@ def parse_fen(chess_fen: str):
     fullmove = int(fullmove)
     return board, move, castling, passant, halfmove, fullmove
     
+def matrix2fen(matrix: list[list[int]]):
+    fen = ""
+    space_marker = 0
+    for irow in range(8):
+        for icol in range(8):
+            if matrix[irow][icol] == "":
+                space_marker += 1
+                if icol == 7:
+                    fen = fen + repr(space_marker)
+                    space_marker = 0
+            elif matrix[irow][icol] != "":
+                if space_marker != 0:
+                    fen = fen + repr(space_marker)                
+                fen = fen + matrix[irow][icol]
+                space_marker = 0
+        pass
+    
+        if irow != 7:
+            fen = fen + "/"
+    
+    
+    
+    return fen
+    
 ########################## END FEN
 
 ########################## PATH:
@@ -297,3 +321,14 @@ if __name__ == '__main__':
     p = get_path("", ">2", "J7", move_type=GRAVEYARD)
     print(p)
     
+    matrix = [["r", "n", "b", "q", "k", "b", "n", "r"], 
+          ["p", "p", "", "", "p", "p", "p", "p"],
+          ["", "", "", "p", "", "", "", ""],
+          ["", "", "", "", "", "", "", ""],
+          ["", "", "", "", "", "", "", ""],
+          ["", "", "", "", "", "", "", ""],
+          ["P", "P", "P", "P", "P", "P", "P", "P"],
+          ["R", "N", "B", "Q", "K", "B", "N", "R"]]
+    
+    fen =matrix2fen(matrix)
+    print(fen)
