@@ -36,7 +36,7 @@ def main():
     ws.run()
     mctrl = MotionController()
     mctrl.startController()
-    bio = boardIO()
+    bio = boardIO.BoardIO()
     state_machine = fsm.FSM(state=fsm.states.INITIALIZE)
     
     state_machine, bio = fsm.initialize(state_machine, bio)
@@ -45,7 +45,13 @@ def main():
     # Logging
     # Camera / Comp Vision
     
-    
+    while True:
+        if bio.started():
+            ws.login('board_player_1', 'board_pwd')
+        elif bio.extraed():
+            ws.login('board_player_1', 'board_pwd', 'board_player_2', ws.BOARD_MULTI_PLAYER)
+        elif ws.game_over:
+            break
     
     # logger == logging cookbook
     sleep(1)

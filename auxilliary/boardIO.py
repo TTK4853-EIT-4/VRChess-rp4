@@ -30,10 +30,10 @@ class BoardIO:
         self._extra = False
         
         self.btn_start = Button(BTN_JOIN)
-        self.btn_start.when_activated(self._at_start_press)
+        self.btn_start.when_activated = self._at_start_press
         
         self.btn_extra = Button(BTN_EXTRA)
-        self.btn_extra.when_activated(self._at_extra_press)
+        self.btn_extra.when_activated = self._at_extra_press
     
         self.led_strip = NeoPixel(LEDSTRIP_ALT, 10)
         boot_led(self.led_strip)

@@ -3,10 +3,13 @@ import jwt
 
 sio = socketio.Client()
 server_url = 'http://localhost:5000'
-BOARD_SINGLE_PLAYER = 'single_player'
-BOARD_MULTI_PLAYER = 'multi_player'
 
 class WebSocketController:
+
+    BOARD_SINGLE_PLAYER = 'single_player'
+    BOARD_MULTI_PLAYER = 'multi_player'
+    game_over = False
+
     def __init__(self):
         self.sio = sio
 
@@ -31,9 +34,14 @@ class WebSocketController:
     @sio.on('authenticated')
     def authenticated(data):
         print('Authenticated:', data)
-        sio.emit('try_join_game', data = {'AuthToken': data['token'], 'Board': BOARD_SINGLE_PLAYER})
+        sio.disconnect()
+        sio.connect(server_url, headers = {'Cookies': 'AuthToken:' + data['token']})
+        sio.emit('try_join_game', data = {})
+
+    def login(self, username, password, opponent=None, mode=BOARD_SINGLE_PLAYER):
+        sio.emit('login', data={'username': username, 'password': password, 'mode': mode, 'opponent': opponent})
 
     def run(self):
         sio.connect(server_url, headers = None)
-        sio.emit('login', data={'Board': BOARD_SINGLE_PLAYER})
-        sio.wait()
+        #sio.emit('login', data={'Board': BOARD_SINGLE_PLAYER})
+        #sio.wait()
