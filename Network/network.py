@@ -3,12 +3,16 @@ import jwt
 
 sio = socketio.Client()
 server_url = 'http://localhost:5000'
-BOARD_SINGLE_PLAYER = 'single_player'
-BOARD_MULTI_PLAYER = 'multi_player'
 
 class WebSocketController:
+
+    BOARD_SINGLE_PLAYER = 'single_player'
+    BOARD_MULTI_PLAYER = 'multi_player'
+
     def __init__(self):
         self.sio = sio
+        self.game_over = False
+        self.game_started = False
 
     @sio.on('message')
     def message(self, sid, data):
@@ -25,15 +29,25 @@ class WebSocketController:
         print('Room created:', data)
 
     @sio.on('player_joined')
-    def player_joined(data):
-        print('Player joined:', data)
+    def player_joined(self, data):
+        self.game_started = True
+    
+    def is_game_started(self):
+        return self.game_started
 
     @sio.on('authenticated')
     def authenticated(data):
         print('Authenticated:', data)
-        sio.emit('try_join_game', data = {'AuthToken': data['token'], 'Board': BOARD_SINGLE_PLAYER})
+        sio.disconnect()
+        sio.connect(server_url, headers = {'Cookies': 'AuthToken:' + data['token']})
+        sio.emit('try_join_game', data = {})
+
+    def login(self, username, password, opponent=None, mode=BOARD_SINGLE_PLAYER):
+        sio.emit('login', data={'username': username, 'password': password, 'mode': mode, 'opponent': opponent})
+
+    def get_connetion_status(self):
+        return sio.connected
 
     def run(self):
         sio.connect(server_url, headers = None)
-        sio.emit('login', data={'Board': BOARD_SINGLE_PLAYER})
-        sio.wait()
+        return sio.connected
