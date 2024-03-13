@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+from time import sleep
 from chess import Board
 
 from Motion.motioncontroller import MotionController
@@ -64,26 +65,41 @@ def initialize(fsm: FSM, bio: BoardIO)->tuple[FSM, BoardIO]:
     # reset engine?
     # reset connection?
     # next state: wait for user input
+    print('Board initialized')
     fsm.set_state(states.WAIT_FOR_USER_INPUT)
     return fsm, bio
 
 # TODO:  DELETE
-def wait_for_server_connection(fsm: FSM, ws: WebSocketController)->tuple[FSM, Board]:
+def wait_for_server_connection(fsm: FSM, ws: WebSocketController)->tuple[FSM, WebSocketController]:
     # Currently want:
     # ping server and check for answer.
     # Server good -> show user
     # Server bad -> show user
     # next state: wait for user input
+    connected = ws.run()
+    while not connected:
+        sleep(1)
+        connected = ws.get_connetion_status()
+
+    print('Server connected')
+    fsm.set_state(states.WAIT_FOR_USER_INPUT)
     
     # NOT a state -> subthread of socketController? some intervaltimer, just ping every 5 seconds?
-    return
+    return fsm, ws
 
 
-def wait_for_user_input(fsm: FSM, bio: BoardIO)->tuple[FSM, Board]:
+def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[FSM, BoardIO, WebSocketController]:
     # What does the player want?
     if bio.started():
-        # update board state with computervision
-        fsm.set_state(states.WAIT_FOR_USER_MOVE)
+        ws.login('board_player_1', 'password')
+    elif bio.extraed():
+        ws.login('board_player_1', 'password', opponent='board_player_2', mode=WebSocketController.BOARD_MULTI_PLAYER)
+
+    while not ws.is_game_started():
+        sleep(1)
+
+    print('Game started')
+    fsm.set_state(states.WAIT_FOR_USER_MOVE)
     
     # Extended:
     # Find player == start btn..

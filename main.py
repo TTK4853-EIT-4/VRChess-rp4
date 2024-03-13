@@ -33,7 +33,6 @@ def main():
     
     # modules:
     ws = WebSocketController()
-    # ws.run()
     mctrl = MotionController()
     mctrl.startController()
     bio = BoardIO()
@@ -43,23 +42,23 @@ def main():
     i=0
     test_limit = 500
     while i<test_limit:
-        print(i)
-        if state_machine == fsm.states.INITIALIZE:
+        print(i, state_machine.state)
+        if state_machine.state == fsm.states.INITIALIZE:
             state_machine, bio = fsm.initialize(state_machine, bio)
         
-        elif state_machine == fsm.states.WAIT_FOR_SERVER_CONNECTION:
+        elif state_machine.state == fsm.states.WAIT_FOR_SERVER_CONNECTION:
+            state_machine, ws = fsm.wait_for_server_connection(state_machine, ws)
+        
+        elif state_machine.state == fsm.states.WAIT_FOR_USER_INPUT:
+            state_machine, bio, ws = fsm.wait_for_user_input(fsm, bio, ws)
+        
+        elif state_machine.state == fsm.states.WAIT_FOR_SERVER_MOVE:
             pass
         
-        elif state_machine == fsm.states.WAIT_FOR_USER_INPUT:
-            state_machine, bio = fsm.wait_for_user_input(fsm, bio)
-        
-        elif state_machine == fsm.states.WAIT_FOR_SERVER_MOVE:
-            pass
-        
-        elif state_machine == fsm.states.WAIT_FOR_USER_MOVE:
+        elif state_machine.state == fsm.states.WAIT_FOR_USER_MOVE:
             state_machine = fsm.wait_for_user_move(fsm)
         
-        elif state_machine == fsm.states.FINISHED:
+        elif state_machine.state == fsm.states.FINISHED:
             pass
     
         i+=1
