@@ -19,13 +19,6 @@ Closed: A move along a path of squares that contains one or more pieces, and mus
 
 # TODO: Note that only "special moves" such as castling, graveyard and horses require "threading" the pieces
 ########################### FEN:
-class FEN_Reader:
-    # Prob not needed, delete.
-    _current_board_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-    
-    def __init__(self) -> None:
-        pass
-    
     
 def parse_fen(chess_fen: str):
     board, move, castling, passant, halfmove, fullmove = chess_fen.split(" ")
