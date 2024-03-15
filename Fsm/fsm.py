@@ -93,7 +93,29 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[
     if bio.started():
         ws.login('board_player_1', 'password')
     elif bio.extraed():
+        # TODO: ...
+        # Please do not mix the login functionality with the room creation functionality as we need to keep the logic for different functionalities in different clients relatively the same
+        # 1. You should login first
+        # 2. Then you should create a room
+        #   2.1. You can use create_room(PlayerMode.BOARD_TWO_PLAYER, 'opponent_username') to create a room. The server will return:
+        #       2.1.1. {status: 'success', message: 'Room created', data: GameRoom object}
+        #       2.1.2. OR {status: 'error', message: 'User <opponent_username> is not found'}
+        #       2.1.3. OR {status: 'error', message: 'User <opponent_username> is already in a room'}
+        # 3. After the room is created, you should subscribe to the socket.io room by using the room_id from the GameRoom object in order to receive/send the game events for the specific room. Read (https://socket.io/docs/v3/rooms/) for more information about the socket rooms
+        # 4. Then you can consider to start the game
+
+        # Note: The room can be created with the following parameters as well:
+        # create_room(PlayerMode.STANDARD, None) # For standard game mode (1 player vs 1 player) each player will have its own client board/web/vr (in case we implement the mooving part)
+        
+        # So.. instead of this:
         ws.login('board_player_1', 'password', opponent='board_player_2', mode=WebSocketController.BOARD_MULTI_PLAYER)
+        # we should do only this:
+        # ws.login('board_player_1', 'password')
+        # And when the client is authenticated, the state machine should create the room like this:
+        # ws.create_room(PlayerMode.BOARD_TWO_PLAYER, 'opponent_username')
+        # and make sure that the status is 'success' before moving to the next state
+        # Then subscribe to the room and start the game // We have't implemented 'socket rooms' in the server side yet. Soon we will plan and implement it.
+        
 
     while not ws.is_game_started():
         sleep(1)
