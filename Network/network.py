@@ -47,7 +47,9 @@ class WebSocketController:
 
     @sio.on('room_updated_')
     def room_updated(self, data):
-        self._room = GameRoom(*data)
+        self._room = GameRoom(data.get('room_owner'))
+        self._room.room_id = data.get('room_id')
+        self._room.room_opponent = data.get('room_opponent')
         if self._room.opponent is not None:
             self.player_joined()
         print('Room updated:', data)
@@ -79,10 +81,13 @@ class WebSocketController:
             data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
         '''
         if data['status'] == 'success':
-            self._room = GameRoom(*data['data'])
+            room_data = data['data']
+            self._room = GameRoom(room_data['room_owner'])
+            self._room.room_id = room_data['room_id']
             sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
             if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
                 print('Room created for two players on the same board')
+                self._room.add_opponent(room_data['Board_player_2'])
                 self.player_joined()
         
         print('room_create_callback:', data)
