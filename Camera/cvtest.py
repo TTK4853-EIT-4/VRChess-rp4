@@ -4,6 +4,7 @@ from picamera2 import Picamera2
 from libcamera import controls
 from time import sleep  
 from uuid import uuid4
+import numpy as np
 
 
 PICS_FOLDER = "PICS/"
@@ -24,6 +25,14 @@ def send_nudes(cam: Picamera2) -> str:
 	cam.stop()
 	return unique_filename
 
+def cropImg(img, x, y, w, h):
+    img = cv2.imread(img)
+    print(img.shape) # Print image shape
+    cropped_img = img[y:y+h, x:x+w]
+    # Display cropped image
+    cv2.imshow("cropped", cropped_image)
+    # Save the cropped image
+    cv2.imwrite("Cropped Image.jpg", cropped_image)
 
 if __name__ == '__main__':
 	pc2 = initialize_camera()
