@@ -4,7 +4,7 @@ from picamera2 import Picamera2
 from libcamera import controls
 from time import sleep  
 from uuid import uuid4
-from auxilliary.fen_reader import matrix2fen
+
 
 PICS_FOLDER = "PICS/"
 
