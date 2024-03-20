@@ -69,9 +69,10 @@ class Engine:
         self._in4 = DigitalOutputDevice(pin=pinset[3], active_high=True, initial_value=False)
         
         self._end_detected = False
-        self._endstop_detection = Button(endstop)
-        self._endstop_detection.when_activated = self._at_endstop
-        self._endstop_detection.when_deactivated = self._not_at_endstop
+        if not is_raspberrypi():
+            self._endstop_detection = Button(endstop)
+            self._endstop_detection.when_activated = self._at_endstop
+            self._endstop_detection.when_deactivated = self._not_at_endstop
     
     def move(self, steps: int):
         # set pins for direction or something..'
