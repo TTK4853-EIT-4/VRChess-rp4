@@ -73,7 +73,7 @@ class WebSocketController:
         sio.emit('login', data={'username': username, 'password': password})
 
     # Callback for the created room
-    def room_create_callback(self, data):
+    def room_create_callback(data):
         '''
         This function is called when the server responds on the room_create emit
 
@@ -81,16 +81,19 @@ class WebSocketController:
             data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
         '''
         if data['status'] == 'success':
-            room_data = data['data']
-            self._room = GameRoom(room_data['room_owner'])
-            self._room.room_id = room_data['room_id']
-            sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
-            if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
-                print('Room created for two players on the same board')
-                self._room.add_opponent('Board_player_2')
-                self.player_joined()
+            data.room_created(data)
         
         print('room_create_callback:', data)
+
+    def room_created(self, data):
+        room_data = data['data']
+        self._room = GameRoom(room_data['room_owner'])
+        self._room.room_id = room_data['room_id']
+        sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
+        if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
+            print('Room created for two players on the same board')
+            self._room.add_opponent('Board_player_2')
+            self.player_joined()
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
