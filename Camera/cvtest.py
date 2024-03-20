@@ -29,7 +29,7 @@ def send_nudes(cam: Picamera2) -> str:
 def cropImg(img, x, y, w, h):
     img = cv2.imread(img)
     print(img.shape) # Print image shape
-    cropped_img = img[y:y+h, x:x+w]
+    cropped_image = img[y:y+h, x:x+w]
     # Display cropped image
     cv2.imshow("cropped", cropped_image)
     # Save the cropped image
