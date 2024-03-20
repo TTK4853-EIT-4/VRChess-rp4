@@ -92,22 +92,24 @@ def wait_for_server_connection(fsm: FSM, ws: WebSocketController)->tuple[FSM, We
 
 def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[FSM, BoardIO, WebSocketController]:
     # What does the player want?
+    while not bio.started():
+        sleep(1)
+    
+    ws.login('board_player_1', 'password')
+
+    # set a timer to wait for 30 seconds
+    # if the button is pressed again, set two player mode
+    timer = 30
+    while timer > 0:
+        if not bio.started():
+            break
+        sleep(1)
+        timer -= 1
+
     if bio.started():
-        ws.login('board_player_1', 'password')
-
-        # set a timer to wait for 30 seconds
-        # if the button is pressed again, set two player mode
-        timer = 30
-        while timer > 0:
-            if not bio.started():
-                break
-            sleep(1)
-            timer -= 1
-
-        if bio.started():
-            ws.create_room()
-        else:
-            ws.create_room(PlayerMode.BOARD_TWO_PLAYER, 'Board_player_2')
+        ws.create_room()
+    else:
+        ws.create_room(PlayerMode.BOARD_TWO_PLAYER, 'Board_player_2')
         # TODO: ...
         # Please do not mix the login functionality with the room creation functionality as we need to keep the logic for different functionalities in different clients relatively the same
         # 1. You should login first
