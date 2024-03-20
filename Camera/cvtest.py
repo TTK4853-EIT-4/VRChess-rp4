@@ -38,4 +38,5 @@ if __name__ == '__main__':
 	pc2 = initialize_camera()
 	pic = send_nudes(pc2)
 	print(f"New pic stored at {pic}")
+	cropImg(pic, 100, 100, 200, 200)
 	
