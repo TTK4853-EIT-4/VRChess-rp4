@@ -4,8 +4,10 @@ from time import sleep
 from chess import Board
 
 from Motion.motioncontroller import MotionController
-from Network.network import WebSocketController
+from Network.network import WebSocketController, PlayerMode
 from auxilliary.boardIO import BoardIO
+from Camera.camera import CameraController
+from GameRoom import GameStatus
 
 
 # Terminology: Server == External opponent
@@ -92,7 +94,20 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[
     # What does the player want?
     if bio.started():
         ws.login('board_player_1', 'password')
-    elif bio.extraed():
+
+        # set a timer to wait for 30 seconds
+        # if the button is pressed again, set two player mode
+        timer = 30
+        while timer > 0:
+            if not bio.started():
+                break
+            sleep(1)
+            timer -= 1
+
+        if bio.started():
+            ws.create_room()
+        else:
+            ws.create_room(PlayerMode.BOARD_TWO_PLAYER, 'Board_player_2')
         # TODO: ...
         # Please do not mix the login functionality with the room creation functionality as we need to keep the logic for different functionalities in different clients relatively the same
         # 1. You should login first
@@ -108,14 +123,12 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[
         # create_room(PlayerMode.STANDARD, None) # For standard game mode (1 player vs 1 player) each player will have its own client board/web/vr (in case we implement the mooving part)
         
         # So.. instead of this:
-        ws.login('board_player_1', 'password', opponent='board_player_2', mode=WebSocketController.BOARD_MULTI_PLAYER)
-        # we should do only this:
+        
         # ws.login('board_player_1', 'password')
         # And when the client is authenticated, the state machine should create the room like this:
         # ws.create_room(PlayerMode.BOARD_TWO_PLAYER, 'opponent_username')
         # and make sure that the status is 'success' before moving to the next state
-        # Then subscribe to the room and start the game // We have't implemented 'socket rooms' in the server side yet. Soon we will plan and implement it.
-        
+        # Then subscribe to the room and start the game // We have't implemented 'socket rooms' in the server side yet. Soon we will plan and implement it.  
 
     while not ws.is_game_started():
         sleep(1)
@@ -129,12 +142,43 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[
 
 
 
-def wait_for_user_move(fsm: FSM)->FSM:
-    # when move is realized ( btn extra? ):
+def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: WebSocketController, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, CameraController]:
+    while not bio.extraed():
+        sleep(1)
+
+    fen = cc.analyze_board()
+    move_attempt = ws.piece_move(fen, 'w' if ws.white else 'b')
+    if move_attempt.get('status') == 'success':
+        if ws._room.game_status == GameStatus.ENDED:
+            fsm.set_state(states.FINISHED)
+        elif ws._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
+            fsm.set_state(states.WAIT_FOR_USER_MOVE)
+        else:   
+            fsm.set_state(states.WAIT_FOR_SERVER_MOVE)
+        
+        ws.white = not ws.white
     #   validate move?
     #   if valid -> send move to server
     #   else notify user with led?
     # else:
     #   check for user disconnect/reset through new btn_start press 
-    
+    bio._extra = False
     return
+
+def wait_for_server_move(fsm: FSM, bio: BoardIO, ws: WebSocketController, mc: MotionController, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, MotionController, CameraController]:
+    # Wait for server move
+    while not ws.get_move():
+        sleep(1)
+
+    if ws._room.game_status == GameStatus.ENDED:
+        fsm.set_state(states.FINISHED)
+    else:
+        # Get move from server
+        move = ws.get_move()
+        if move:
+            mc.request_move(move)
+            cc.analyze_board()
+            fsm.set_state(states.WAIT_FOR_USER_MOVE)
+        else:
+            fsm.set_state(states.WAIT_FOR_SERVER_MOVE)
+    return fsm, bio, ws, mc, cc
