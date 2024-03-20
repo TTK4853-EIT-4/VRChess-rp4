@@ -2,6 +2,7 @@
 print('camera testing 1')
 from picamera2 import Picamera2
 from libcamera import controls
+import cv2
 from time import sleep  
 from uuid import uuid4
 import numpy as np
