@@ -104,9 +104,6 @@ class WebSocketController:
     def is_game_started(self):
         return self._game_started
     
-    def is_room_created(self):
-        return self._room_created
-    
     def piece_move(self, fen, color):
         uci = get_uci(self._room.game.fen(), fen, color)
         Nf3 = chess.Move.from_uci(uci)
