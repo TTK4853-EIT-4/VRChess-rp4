@@ -4,7 +4,7 @@ from enum import Enum
 from GameRoom import GameRoom, get_uci
 
 sio = socketio.Client()
-server_url = 'http://localhost:5000'
+server_url = 'http://chess.datagonia.no:5000/'
 
 # Player modes enum
 class PlayerMode(Enum):
