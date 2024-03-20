@@ -94,7 +94,7 @@ class WebSocketController:
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
-        sio.emit('create_room', data={'mode': mode, 'opponent': opponent_username}, callback = self.room_create_callback)
+        sio.emit('create_room', data={'mode': mode.value, 'opponent': opponent_username}, callback = self.room_create_callback)
 
     def get_connetion_status(self):
         return sio.connected

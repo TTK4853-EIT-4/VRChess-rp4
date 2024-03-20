@@ -107,7 +107,7 @@ class GameRoomJSONEncoder(JSONEncoder):
                 "game_winner": obj.game_winner,
                 "game_loser": obj.game_loser,
                 "game": obj.game.fen() if obj.game else None,
-                "player_mode": obj.player_mode.value
+                "player_mode": obj.player_mode
             }
         # Let the base class default method raise the TypeError
         return JSONEncoder.default(self, obj)
