@@ -97,6 +97,9 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[
     
     ws.login('board_player_1', 'password')
 
+    while not ws._authenticated:
+        sleep(1)
+        
     # set a timer to wait for 30 seconds
     # if the button is pressed again, set two player mode
     timer = 30

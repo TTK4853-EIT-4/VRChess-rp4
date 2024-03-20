@@ -21,6 +21,7 @@ class WebSocketController:
         self._room = None
         self.white = True
         self.last_move = None
+        self._authenticated = False
 
     # Invoked when the connection is established
     @sio.event
@@ -55,9 +56,9 @@ class WebSocketController:
         print('Room updated:', data)
  
     @sio.on('authenticated')
-    def authenticated(data):
+    def authenticated(self, data):
         print('Authenticated:', data)
-
+        self._authenticated =True
         sio.disconnect()
         sio.connect(server_url, headers={'Cookies': 'AuthToken:' + data['token']})
 
@@ -81,19 +82,9 @@ class WebSocketController:
             data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
         '''
         if data['status'] == 'success':
-            data.room_created(data)
+            room_created(data)
         
         print('room_create_callback:', data)
-
-    def room_created(self, data):
-        room_data = data['data']
-        self._room = GameRoom(room_data['room_owner'])
-        self._room.room_id = room_data['room_id']
-        sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
-        if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
-            print('Room created for two players on the same board')
-            self._room.add_opponent('Board_player_2')
-            self.player_joined()
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
@@ -131,3 +122,13 @@ class WebSocketController:
     
     def get_move(self):
         return self.last_move
+
+def room_created(self, data):
+    room_data = data['data']
+    self._room = GameRoom(room_data['room_owner'])
+    self._room.room_id = room_data['room_id']
+    sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
+    if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
+        print('Room created for two players on the same board')
+        self._room.add_opponent('Board_player_2')
+        self.player_joined()
