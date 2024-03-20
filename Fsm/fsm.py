@@ -68,7 +68,7 @@ def initialize(fsm: FSM, bio: BoardIO)->tuple[FSM, BoardIO]:
     # reset connection?
     # next state: wait for user input
     print('Board initialized')
-    fsm.set_state(states.WAIT_FOR_USER_INPUT)
+    fsm.set_state(states.WAIT_FOR_SERVER_CONNECTION)
     return fsm, bio
 
 # TODO:  DELETE
