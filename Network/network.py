@@ -1,6 +1,7 @@
 import socketio
-import jwt
+import chess
 from enum import Enum
+from GameRoom import GameRoom, get_uci
 
 sio = socketio.Client()
 server_url = 'http://localhost:5000'
@@ -15,8 +16,11 @@ class WebSocketController:
 
     def __init__(self):
         self.sio = sio
-        self.game_over = False
-        self.game_started = False
+        self._game_over = False
+        self._game_started = False
+        self._room = None
+        self.white = True
+        self.last_move = None
 
     # Invoked when the connection is established
     @sio.event
@@ -36,23 +40,17 @@ class WebSocketController:
     @sio.on('message')
     def message(self, sid, data):
         print('message', sid, data)
-
-    def emit(self, event, data, sid=None):
-        if sid:
-            self.sio.emit(event, data, room=sid)
-        else:
-            self.sio.emit(event, data)
     
     @sio.on('room_created')
     def room_created(data):
         print('Room created:', data)
 
-    @sio.on('player_joined')
-    def player_joined(self, data):
-        self.game_started = True
-    
-    def is_game_started(self):
-        return self.game_started
+    @sio.on('room_updated_')
+    def room_updated(self, data):
+        self._room = GameRoom(*data)
+        if self._room.opponent is not None:
+            self.player_joined()
+        print('Room updated:', data)
  
     @sio.on('authenticated')
     def authenticated(data):
@@ -60,6 +58,14 @@ class WebSocketController:
 
         sio.disconnect()
         sio.connect(server_url, headers={'Cookies': 'AuthToken:' + data['token']})
+
+    @sio.on('piece_moved')
+    def piece_moved(self, data):
+        print('Piece moved:', data)
+        move = data['move']
+        Nf3 = chess.Move.from_uci(move['source'] + move['target'])
+        self._room.game.push(Nf3)
+        self.last_move = move
 
     def login(self, username, password):
         sio.emit('login', data={'username': username, 'password': password})
@@ -72,10 +78,17 @@ class WebSocketController:
         Args:
             data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
         '''
+        if data['status'] == 'success':
+            self._room = GameRoom(*data['data'])
+            sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
+            if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
+                print('Room created for two players on the same board')
+                self.player_joined()
+        
         print('room_create_callback:', data)
 
     # Create a room
-    def create_room(self, mode, opponent_username):
+    def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
         sio.emit('create_room', data={'mode': mode, 'opponent': opponent_username}, callback = self.room_create_callback)
 
     def get_connetion_status(self):
@@ -84,3 +97,32 @@ class WebSocketController:
     def run(self):
         sio.connect(server_url, headers = None)
         return sio.connected
+    
+    def player_joined(self):
+        self._game_started = True
+    
+    def is_game_started(self):
+        return self._game_started
+    
+    def is_room_created(self):
+        return self._room_created
+    
+    def piece_move(self, fen, color):
+        uci = get_uci(self._room.game.fen(), fen, color)
+        Nf3 = chess.Move.from_uci(uci)
+
+        move = {'source': chess.square_name(Nf3.from_square), 
+                'target': chess.square_name(Nf3.to_square), 
+                'piece': chess.piece_name(Nf3.promotion)}
+
+        # check if the move is valid
+        if Nf3 not in self._room.game.legal_moves:
+            return {'status': 'error', 'message': f"{Nf3} is not a legal move."}
+        self._room.game.push(Nf3)
+        return_data = {'move': move, 'fen': self._room.game.fen()}
+        self.last_move = None
+        sio.emit('piece_moved', return_data, room=self._room.room_id)
+        return {'status': 'success', 'data': return_data}
+    
+    def get_move(self):
+        return self.last_move
