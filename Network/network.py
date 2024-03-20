@@ -87,7 +87,7 @@ class WebSocketController:
             sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
             if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
                 print('Room created for two players on the same board')
-                self._room.add_opponent(room_data['Board_player_2'])
+                self._room.add_opponent('Board_player_2')
                 self.player_joined()
         
         print('room_create_callback:', data)
