@@ -2,7 +2,7 @@ from pinout import LEDSTRIP
 import logging
 from time import sleep
     
-from Network.network import helper as GameHelper
+from Network.network import get_helper
 from Motion.motioncontroller import MotionController
 from auxilliary.boardIO import BoardIO
 from Camera.camera import CameraController
@@ -33,7 +33,7 @@ def main():
     
     
     # modules:
-    ws = GameHelper
+    ws = get_helper()
     mctrl = MotionController()
     mctrl.startController()
     bio = BoardIO()

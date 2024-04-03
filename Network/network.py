@@ -68,3 +68,6 @@ class WebSocketController:
             helper.room_created(data)
         
         print('room_create_callback:', data)
+
+def get_helper():
+    return helper
