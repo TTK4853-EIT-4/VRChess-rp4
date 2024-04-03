@@ -3,12 +3,10 @@ from dataclasses import dataclass
 from time import sleep
 
 from Motion.motioncontroller import MotionController
-from Network.network import GameHelper, PlayerMode
-from auxilliary.boardIO import BoardIO
+from auxilliary.boardIO import BoardIO, COLOR
 from Camera.camera import CameraController
 from GameRoom import GameStatus
-from game_helper import GameStatus, PlayerMode
-from neopixel import NeoPixelColors
+from game_helper import GameHelper, PlayerMode
 
 
 # Terminology: Server == External opponent
@@ -130,7 +128,7 @@ def wait_for_user_move(fsm: FSM, bio: BoardIO, helper: GameHelper, cc: CameraCon
         else:   
             fsm.set_state(states.WAIT_FOR_SERVER_MOVE)
     else:
-        bio.led_blink(NeoPixelColors.RED, 3)
+        bio.led_blink(COLOR.RED, 3)
         fsm.set_state(states.WAIT_FOR_USER_MOVE)
 
     bio._extra = False
