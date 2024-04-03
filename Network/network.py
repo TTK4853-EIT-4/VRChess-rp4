@@ -5,6 +5,7 @@ from GameRoom import GameRoom, get_uci
 
 sio = socketio.Client()
 server_url = 'http://chess.datagonia.no:5000/'
+helper = None
 
 # Player modes enum
 class PlayerMode(Enum):
@@ -39,14 +40,12 @@ class WebSocketController:
 
     @sio.on('room_updated_')
     def room_updated(data):
-        helper = GameHelper()
         helper.player_joined(data['room_owner'], data['room_id'], data['room_opponent'])
         print('Room updated:', data)
  
     @sio.on('authenticated')
     def authenticated(data):
         print('Authenticated:', data)
-        helper = GameHelper()
         helper.set_authenticated()
         sio.disconnect()
         sio.connect(server_url, headers={'Cookies': 'AuthToken:' + data['token']})
@@ -55,7 +54,6 @@ class WebSocketController:
     def piece_moved(data):
         print('Piece moved:', data)
         move = data['move']
-        helper = GameHelper()
         helper.move_piece(move)
 
     # Callback for the created room
@@ -67,7 +65,6 @@ class WebSocketController:
             data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
         '''
         if data['status'] == 'success':
-            helper = GameHelper()
             helper.room_created(data)
         
         print('room_create_callback:', data)
@@ -81,6 +78,7 @@ class GameHelper:
         self.white = True
         self.last_move = None
         self._authenticated = False
+        helper = self
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
