@@ -40,10 +40,10 @@ def newcrop(img):
     img = cv2.imread(img)
     # points for test.jpg
     cnt = np.array([
-            [[64, 49]],
-            [[1022, 101]],
-            [[2901, 2026]],
-            [[2008, 1073]]
+            [[1330, 430]],
+            [[3350, 429]],
+            [[3331, 2406]],
+            [[1429, 2385]]
         ])
     print("shape of cnt: {}".format(cnt.shape))
     rect = cv2.minAreaRect(cnt)
