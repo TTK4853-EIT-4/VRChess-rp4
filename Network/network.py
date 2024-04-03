@@ -49,18 +49,5 @@ class WebSocketController:
         move = data['move']
         helper.move_piece(move)
 
-    # Callback for the created room
-    def room_create_callback(data):
-        '''
-        This function is called when the server responds on the room_create emit
-
-        Args:
-            data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
-        '''
-        if data['status'] == 'success':
-            helper.room_created(data)
-        
-        print('room_create_callback:', data)
-
 def get_helper():
     return helper

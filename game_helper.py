@@ -1,5 +1,4 @@
 from enum import Enum
-from Network.network import WebSocketController
 import socketio
 import GameRoom
 import chess
@@ -23,7 +22,7 @@ class GameHelper:
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
-        self.sio.emit('create_room', data={'mode': mode.value, 'opponent': opponent_username}, callback = WebSocketController.room_create_callback)
+        self.sio.emit('create_room', data={'mode': mode.value, 'opponent': opponent_username}, callback = self.room_create_callback)
 
     def get_connetion_status(self):
         return self.sio.connected
@@ -82,3 +81,16 @@ class GameHelper:
         self.white = True
         self.last_move = None
         self._authenticated = False
+
+    # Callback for the created room
+    def room_create_callback(self, data):
+        '''
+        This function is called when the server responds on the room_create emit
+
+        Args:
+            data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
+        '''
+        if data['status'] == 'success':
+            self.room_created(data)
+        
+        print('room_create_callback:', data)
