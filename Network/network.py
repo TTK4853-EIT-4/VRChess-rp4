@@ -39,13 +39,15 @@ class WebSocketController:
 
     @sio.on('room_updated_')
     def room_updated(data):
-        GameHelper.player_joined(data['room_owner'], data['room_id'], data['room_opponent'])
+        helper = GameHelper()
+        helper.player_joined(data['room_owner'], data['room_id'], data['room_opponent'])
         print('Room updated:', data)
  
     @sio.on('authenticated')
     def authenticated(data):
         print('Authenticated:', data)
-        GameHelper.set_authenticated()
+        helper = GameHelper()
+        helper.set_authenticated()
         sio.disconnect()
         sio.connect(server_url, headers={'Cookies': 'AuthToken:' + data['token']})
 
@@ -53,7 +55,8 @@ class WebSocketController:
     def piece_moved(data):
         print('Piece moved:', data)
         move = data['move']
-        GameHelper.move_piece(move)
+        helper = GameHelper()
+        helper.move_piece(move)
 
     # Callback for the created room
     def room_create_callback(data):
@@ -64,7 +67,8 @@ class WebSocketController:
             data (dict): The data returned from the server if format: {'status': str(success|error), 'message': str, 'data': dict(GameRoom object.. look the server code for more info)}
         '''
         if data['status'] == 'success':
-            GameHelper.room_created(data)
+            helper = GameHelper()
+            helper.room_created(data)
         
         print('room_create_callback:', data)
 
