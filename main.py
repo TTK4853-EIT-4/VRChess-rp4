@@ -2,9 +2,10 @@ from pinout import LEDSTRIP
 import logging
 from time import sleep
     
-from Network.network import GameHelper
+from Network.network import helper as GameHelper
 from Motion.motioncontroller import MotionController
 from auxilliary.boardIO import BoardIO
+from Camera.camera import CameraController
 import Fsm.fsm as fsm
     
 def main():
@@ -32,10 +33,11 @@ def main():
     
     
     # modules:
-    ws = GameHelper()
+    ws = GameHelper
     mctrl = MotionController()
     mctrl.startController()
     bio = BoardIO()
+    cc = CameraController()
     state_machine = fsm.FSM(state=fsm.states.INITIALIZE)
     
     
@@ -53,12 +55,14 @@ def main():
             state_machine, bio, ws = fsm.wait_for_user_input(fsm, bio, ws)
         
         elif state_machine.state == fsm.states.WAIT_FOR_SERVER_MOVE:
+            state_machine = fsm.wait_for_server_move(fsm, bio, ws, mctrl, cc)
             pass
         
         elif state_machine.state == fsm.states.WAIT_FOR_USER_MOVE:
-            state_machine = fsm.wait_for_user_move(fsm)
+            state_machine = fsm.wait_for_user_move(fsm, bio, ws, cc)
         
         elif state_machine.state == fsm.states.FINISHED:
+            state_machine = fsm.finished(fsm, bio, ws, mctrl, cc)
             pass
     
         i+=1

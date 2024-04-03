@@ -79,7 +79,14 @@ class BoardIO:
             
         pixels.fill((0,0,0))   
 
-            
+    def led_blink(self, color, times):
+        pixels = NeoPixel(LEDSTRIP, 10)
+        for i in range(times):
+            pixels.fill(color)
+            sleep(0.5)
+            pixels.fill((0,0,0))
+            sleep(0.5)
+        return       
     
     def _at_start_press(self):
         self._started = not self._started
