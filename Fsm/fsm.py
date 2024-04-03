@@ -147,7 +147,7 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: GameHelper)->tuple[FSM, Boar
 
 
 
-def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: GameHelper, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, CameraController]:
+def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: GameHelper, cc: CameraController)->tuple[FSM, BoardIO, GameHelper, CameraController]:
     while not bio.extraed():
         sleep(1)
 
@@ -170,7 +170,7 @@ def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: GameHelper, cc: CameraControl
     bio._extra = False
     return
 
-def wait_for_server_move(fsm: FSM, bio: BoardIO, ws: GameHelper, mc: MotionController, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, MotionController, CameraController]:
+def wait_for_server_move(fsm: FSM, bio: BoardIO, ws: GameHelper, mc: MotionController, cc: CameraController)->tuple[FSM, BoardIO, GameHelper, MotionController, CameraController]:
     # Wait for server move
     while not ws.get_move():
         sleep(1)
