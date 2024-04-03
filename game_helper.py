@@ -1,7 +1,13 @@
-from Network.network import PlayerMode
+from enum import Enum
 import socketio
 import GameRoom
 import chess
+
+# Player modes enum
+class PlayerMode(Enum):
+    STANDARD = 1 # Standard multiplayer game with two players on different devices/clients
+    BOARD_TWO_PLAYER = 2 # Two players on the same physical board
+    # For BOARD_TWO_PLAYERS the opponent will be set by username on the room creation
 
 class GameHelper:
     def __init__(self, sio: socketio.Client, server_url: str):

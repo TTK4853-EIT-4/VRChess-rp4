@@ -1,16 +1,9 @@
 import socketio
-from enum import Enum
 from game_helper import GameHelper
 
 sio = socketio.Client()
 server_url = 'http://chess.datagonia.no:5000/'
 helper = GameHelper(sio, server_url)
-
-# Player modes enum
-class PlayerMode(Enum):
-    STANDARD = 1 # Standard multiplayer game with two players on different devices/clients
-    BOARD_TWO_PLAYER = 2 # Two players on the same physical board
-    # For BOARD_TWO_PLAYERS the opponent will be set by username on the room creation
 
 class WebSocketController:
 
