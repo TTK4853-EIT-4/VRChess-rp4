@@ -2,7 +2,7 @@ from pinout import LEDSTRIP
 import logging
 from time import sleep
     
-from Network.network import WebSocketController
+from Network.network import GameHelper
 from Motion.motioncontroller import MotionController
 from auxilliary.boardIO import BoardIO
 import Fsm.fsm as fsm
@@ -32,7 +32,7 @@ def main():
     
     
     # modules:
-    ws = WebSocketController()
+    ws = GameHelper()
     mctrl = MotionController()
     mctrl.startController()
     bio = BoardIO()
