@@ -4,7 +4,7 @@ from time import sleep
 from chess import Board
 
 from Motion.motioncontroller import MotionController
-from Network.network import WebSocketController, PlayerMode
+from Network.network import GameHelper, PlayerMode
 from auxilliary.boardIO import BoardIO
 from Camera.camera import CameraController
 from GameRoom import GameStatus
@@ -72,7 +72,7 @@ def initialize(fsm: FSM, bio: BoardIO)->tuple[FSM, BoardIO]:
     return fsm, bio
 
 # TODO:  DELETE
-def wait_for_server_connection(fsm: FSM, ws: WebSocketController)->tuple[FSM, WebSocketController]:
+def wait_for_server_connection(fsm: FSM, ws: GameHelper)->tuple[FSM, GameHelper]:
     # Currently want:
     # ping server and check for answer.
     # Server good -> show user
@@ -90,7 +90,7 @@ def wait_for_server_connection(fsm: FSM, ws: WebSocketController)->tuple[FSM, We
     return fsm, ws
 
 
-def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[FSM, BoardIO, WebSocketController]:
+def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: GameHelper)->tuple[FSM, BoardIO, GameHelper]:
     # What does the player want?
     while not bio.started():
         sleep(1)
@@ -147,7 +147,7 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, ws: WebSocketController)->tuple[
 
 
 
-def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: WebSocketController, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, CameraController]:
+def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: GameHelper, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, CameraController]:
     while not bio.extraed():
         sleep(1)
 
@@ -170,7 +170,7 @@ def wait_for_user_move(fsm: FSM, bio: BoardIO, ws: WebSocketController, cc: Came
     bio._extra = False
     return
 
-def wait_for_server_move(fsm: FSM, bio: BoardIO, ws: WebSocketController, mc: MotionController, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, MotionController, CameraController]:
+def wait_for_server_move(fsm: FSM, bio: BoardIO, ws: GameHelper, mc: MotionController, cc: CameraController)->tuple[FSM, BoardIO, WebSocketController, MotionController, CameraController]:
     # Wait for server move
     while not ws.get_move():
         sleep(1)
