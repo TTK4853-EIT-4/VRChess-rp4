@@ -22,8 +22,7 @@ class GameHelper:
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
-        self.sio.emit('create_room', data={'mode': mode.value, 'opponent': opponent_username}, callback = room_create_callback)
-        helper = self
+        self.sio.emit('create_room', data={'mode': mode.value, 'opponent': opponent_username})
 
     def get_connetion_status(self):
         return self.sio.connected

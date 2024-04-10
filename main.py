@@ -33,7 +33,7 @@ def main():
     
     
     # modules:
-    ws = get_helper()
+    helper = get_helper()
     mctrl = MotionController()
     mctrl.startController()
     bio = BoardIO()
@@ -49,20 +49,20 @@ def main():
             state_machine, bio = fsm.initialize(state_machine, bio)
         
         elif state_machine.state == fsm.states.WAIT_FOR_SERVER_CONNECTION:
-            state_machine, ws = fsm.wait_for_server_connection(state_machine, ws)
+            state_machine, helper = fsm.wait_for_server_connection(state_machine, helper)
         
         elif state_machine.state == fsm.states.WAIT_FOR_USER_INPUT:
-            state_machine, bio, ws = fsm.wait_for_user_input(fsm, bio, ws)
+            state_machine, bio, helper = fsm.wait_for_user_input(fsm, bio, helper)
         
         elif state_machine.state == fsm.states.WAIT_FOR_SERVER_MOVE:
-            state_machine = fsm.wait_for_server_move(fsm, bio, ws, mctrl, cc)
+            state_machine = fsm.wait_for_server_move(fsm, bio, helper, mctrl, cc)
             pass
         
         elif state_machine.state == fsm.states.WAIT_FOR_USER_MOVE:
-            state_machine = fsm.wait_for_user_move(fsm, bio, ws, cc)
+            state_machine = fsm.wait_for_user_move(fsm, bio, helper, cc)
         
         elif state_machine.state == fsm.states.FINISHED:
-            state_machine = fsm.finished(fsm, bio, ws, mctrl, cc)
+            state_machine = fsm.finished(fsm, bio, helper, mctrl, cc)
             pass
     
         i+=1

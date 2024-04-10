@@ -49,5 +49,11 @@ class WebSocketController:
         move = data['move']
         helper.move_piece(move)
 
+    @sio.on('room_created_status_self')
+    def room_created_status_self(data):
+        print('Room created status self:', data)
+        if data['status'] == 'success':
+            helper.room_created(data['data'])
+
 def get_helper():
     return helper
