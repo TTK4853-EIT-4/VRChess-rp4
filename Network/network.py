@@ -59,6 +59,8 @@ class WebSocketController:
         print('Room created status self:', data)
         if data['status'] == 'success':
             helper.room_created(data['data'])
+        else:
+            helper.reset()
 
 def get_helper():
     return helper

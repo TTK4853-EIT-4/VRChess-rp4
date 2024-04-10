@@ -75,12 +75,14 @@ class GameHelper:
         self.sio.emit('login', data={'username': username, 'password': password})
 
     def reset(self):
+        print('Full reset of game board')
         self._game_over = False
         self._game_started = False
         self._room = None
         self.white = True
         self.last_move = None
         self._authenticated = False
+        self.sio.disconnect()
 
 helper: GameHelper = None
 

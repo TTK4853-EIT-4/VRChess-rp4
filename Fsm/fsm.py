@@ -111,6 +111,9 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, helper: GameHelper)->tuple[FSM, 
 
     print("wait for game to start...")
     while not helper.is_game_started():
+        if not helper.get_connetion_status():
+            fsm.set_state(states.WAIT_FOR_SERVER_CONNECTION)
+            return fsm, bio, helper
         sleep(1)
 
     print('Game started')
