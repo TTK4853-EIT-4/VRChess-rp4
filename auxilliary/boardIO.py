@@ -99,7 +99,7 @@ class BoardIO:
     def started(self):
         return self._started
     
-    def extraed(self):
+    def moved(self):
         return self._extra
     
     def reset(self):

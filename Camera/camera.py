@@ -29,10 +29,9 @@ class CameraController:
     def _take_picture(self):
         self.picture = send_nudes(self.cam)
     
-    # TODO:
     def _computer_vision(self):
         """Do all the computer vision stuff"""
-        self.cv_board = self.cv_board
+        self.cv_board = vision2000(self.picture)
         return
     
     def _construct_board(self) -> str:

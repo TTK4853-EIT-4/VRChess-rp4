@@ -4,7 +4,7 @@ from time import sleep
     
 from Network.network import get_helper
 from Motion.motioncontroller import MotionController
-from auxilliary.boardIO import BoardIO
+from auxilliary.boardIO import BoardIO, COLOR
 from Camera.camera import CameraController
 import Fsm.fsm as fsm
     
@@ -45,6 +45,10 @@ def main():
     test_limit = 500
     while i<test_limit:
         print(i, state_machine.state)
+        
+        if bio.moved():
+            bio.led_blink(color=COLOR.BLUE, times=2)
+        
         if state_machine.state == fsm.states.INITIALIZE:
             state_machine, bio = fsm.initialize(state_machine, bio)
         
@@ -64,7 +68,7 @@ def main():
         elif state_machine.state == fsm.states.FINISHED:
             state_machine = fsm.finished(fsm, bio, helper, mctrl, cc)
             pass
-    
+        
         i+=1
     # logger == logging cookbook
     sleep(1)
