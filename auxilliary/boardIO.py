@@ -1,6 +1,5 @@
 from pinout import LEDSTRIP_ALT, LEDSTRIP, BTN_JOIN, BTN_EXTRA
 from auxilliary.isrp4 import is_raspberrypi
-
 if is_raspberrypi():
     from gpiozero import DigitalOutputDevice, Button
     from neopixel import NeoPixel
@@ -80,7 +79,7 @@ class BoardIO:
         pixels.fill((0,0,0))   
 
     def led_blink(self, color, times):
-        pixels = NeoPixel(LEDSTRIP, 10)
+        pixels = NeoPixel(LEDSTRIP_ALT, 10)
         for i in range(times):
             pixels.fill(color)
             sleep(0.5)
