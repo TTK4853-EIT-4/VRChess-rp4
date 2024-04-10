@@ -55,8 +55,8 @@ class GameHelper:
 
     def room_created(self, data):
         print(f'Room created: {data}')
-        self._room = GameRoom(data['room_owner'])
-        self._room.room_id = data['room_id']
+        self._room = GameRoom(data.get('room_owner'))
+        self._room.room_id = data.get('room_id')
         self.sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
         if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
             print('Room created for two players on the same board')
