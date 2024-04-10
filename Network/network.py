@@ -1,4 +1,5 @@
 import socketio
+from time import sleep
 from game_helper import GameHelper
 
 sio = socketio.Client()
@@ -42,6 +43,7 @@ class WebSocketController:
         helper.set_authenticated()
         sio.disconnect()
         sio.connect(server_url, headers={'Cookie': 'AuthToken=' + data['token']})
+        sleep(2)
 
     @sio.on('piece_moved_')
     def piece_moved(data):
