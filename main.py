@@ -4,7 +4,7 @@ from time import sleep
     
 from Network.network import get_helper
 from Motion.motioncontroller import MotionController
-from auxilliary.boardIO import BoardIO
+from auxilliary.boardIO import BoardIO, COLOR
 from Camera.camera import CameraController
 import Fsm.fsm as fsm
     
@@ -66,7 +66,7 @@ def main():
             pass
         
         if bio.moved():
-            bio.wifi_status_led(1)
+            bio.led_blink(color=COLOR.BLUE, tiems=2)
         i+=1
     # logger == logging cookbook
     sleep(1)
