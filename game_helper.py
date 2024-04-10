@@ -1,6 +1,6 @@
 from enum import Enum
 import socketio
-import GameRoom
+from GameRoom import GameRoom
 import chess
 import json
 
