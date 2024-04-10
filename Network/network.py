@@ -40,10 +40,11 @@ class WebSocketController:
     @sio.on('authenticated')
     def authenticated(data):
         print('Authenticated:', data)
-        helper.set_authenticated()
         sio.disconnect()
         sio.connect(server_url, headers={'Cookie': 'AuthToken=' + data['token']})
-        sleep(2)
+        sio.sleep(2)
+        helper.set_authenticated()
+        
 
     @sio.on('piece_moved_')
     def piece_moved(data):
