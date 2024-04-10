@@ -64,7 +64,9 @@ def main():
         elif state_machine.state == fsm.states.FINISHED:
             state_machine = fsm.finished(fsm, bio, ws, mctrl, cc)
             pass
-    
+        
+        if bio.moved():
+            bio.wifi_status_led(1)
         i+=1
     # logger == logging cookbook
     sleep(1)
