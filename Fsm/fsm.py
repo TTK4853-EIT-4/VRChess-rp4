@@ -115,7 +115,7 @@ def wait_for_user_input(fsm: FSM, bio: BoardIO, helper: GameHelper)->tuple[FSM, 
 
 
 def wait_for_user_move(fsm: FSM, bio: BoardIO, helper: GameHelper, cc: CameraController)->tuple[FSM, BoardIO, GameHelper, CameraController]:
-    while not bio.extraed():
+    while not bio.moved():
         sleep(1)
 
     fen = cc.analyze_board()
