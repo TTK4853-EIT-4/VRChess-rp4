@@ -22,7 +22,7 @@ class GameHelper:
 
     # Create a room
     def create_room(self, mode = PlayerMode.STANDARD, opponent_username = None):
-        self.sio.emit('create_room', data={'player_mode': mode.value, 'opponent': opponent_username})
+        self.sio.emit('create_room', data={'player_mode': mode.value, 'opponent': opponent_username, 'side': 'white'})
 
     def get_connetion_status(self):
         return self.sio.connected
