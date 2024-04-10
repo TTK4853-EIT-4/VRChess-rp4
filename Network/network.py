@@ -41,6 +41,7 @@ class WebSocketController:
     def authenticated(data):
         print('Authenticated:', data)
         sio.disconnect()
+        sio.sleep(2)
         sio.connect(server_url, wait_timeout=10, headers={'Cookie': 'AuthToken=' + data['token']})
         while not helper.get_connetion_status():
             sleep(1)
