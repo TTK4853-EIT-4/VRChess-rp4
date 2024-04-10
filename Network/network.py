@@ -41,7 +41,7 @@ class WebSocketController:
         print('Authenticated:', data)
         helper.set_authenticated()
         sio.disconnect()
-        sio.connect(server_url, headers={'Cookies': 'AuthToken:' + data['token']})
+        sio.connect(server_url, headers={'Cookie': 'AuthToken=' + data['token']})
 
     @sio.on('piece_moved_')
     def piece_moved(data):
