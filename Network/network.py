@@ -3,7 +3,7 @@ from time import sleep
 from game_helper import GameHelper
 
 sio = socketio.Client()
-server_url = 'http://chess.datagonia.no:5000/'
+server_url = 'http://77.71.71.125:5000/'
 helper = GameHelper(sio, server_url)
 
 class WebSocketController:
@@ -42,7 +42,8 @@ class WebSocketController:
         print('Authenticated:', data)
         sio.disconnect()
         sio.connect(server_url, headers={'Cookie': 'AuthToken=' + data['token']})
-        sio.sleep(2)
+        while not helper.get_connetion_status():
+            sleep(1)
         helper.set_authenticated()
         
 
