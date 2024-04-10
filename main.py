@@ -35,7 +35,7 @@ def main():
     # modules:
     helper = get_helper()
     mctrl = MotionController()
-    mctrl.startController()
+    # mctrl.startController()
     bio = BoardIO()
     cc = CameraController()
     state_machine = fsm.FSM(state=fsm.states.INITIALIZE)

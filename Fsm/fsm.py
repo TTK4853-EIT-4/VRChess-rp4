@@ -82,28 +82,34 @@ def wait_for_server_connection(fsm: FSM, helper: GameHelper)->tuple[FSM, GameHel
 
 def wait_for_user_input(fsm: FSM, bio: BoardIO, helper: GameHelper)->tuple[FSM, BoardIO, GameHelper]:
     # Wait for user input
+    print("waiting for start")
     while not bio.started():
         sleep(1)
+    print("Started")
+    bio._started = False
     
     helper.login('board_player_1', 'password')
 
-    while not helper._authenticated:
+    print("waiting for auth...")
+    while not helper._authenticated:    
         sleep(1)
+    print("auth complete")
         
     # set a timer to wait for 30 seconds
     # if the button is pressed again, set two player mode
-    timer = 30
-    while timer > 0:
-        if not bio.started():
-            break
-        sleep(1)
-        timer -= 1
+    #timer = 30
+    #while timer > 0:
+    #    if not bio.started():
+    #        break
+    #    sleep(1)
+    #    timer -= 1
 
-    if bio.started():
-        helper.create_room()
-    else:
-        helper.create_room(PlayerMode.BOARD_TWO_PLAYER, 'Board_player_2')
+    #if bio.started():
+    #    helper.create_room()
+    #else:
+    helper.create_room(PlayerMode.BOARD_TWO_PLAYER, 'Board_player_2')
 
+    print("wait for game to start...")
     while not helper.is_game_started():
         sleep(1)
 
