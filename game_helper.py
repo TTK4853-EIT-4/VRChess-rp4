@@ -54,7 +54,7 @@ class GameHelper:
         # self.validate_outcome()
         return_data = {'room_id': self._room.room_id, 'move': {'fen': fen}}
         self.last_move = None
-        self.sio.emit('piece_move_notify', return_data, room=self._room.room_id)
+        self.sio.emit('piece_move_notify', return_data)
         return {'status': 'success', 'data': return_data}
     
     def validate_outcome(self):
