@@ -11,7 +11,7 @@ import numpy as np
 from inference_sdk import InferenceHTTPClient
 
 
-PICS_FOLDER = "PICS/"
+PICS_FOLDER = "Camera/PICS/"
 
 #picam2.start(show_preview=True)
 #picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
