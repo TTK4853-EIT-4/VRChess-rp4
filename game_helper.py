@@ -44,6 +44,7 @@ class GameHelper:
         return self._game_started
     
     def piece_move(self, fen):
+        print(self._room.game)
         print(f'Piece move: {fen}')
         Nf3 = self._room.get_move(fen)
         if Nf3 is None:

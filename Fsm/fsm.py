@@ -137,6 +137,7 @@ def wait_for_user_move(fsm: FSM, bio: BoardIO, helper: GameHelper, cc: CameraCon
         else:   
             fsm.set_state(states.WAIT_FOR_SERVER_MOVE)
     else:
+        print(move_attempt.get('message'))
         bio.led_blink(COLOR.RED, 3)
         fsm.set_state(states.WAIT_FOR_USER_MOVE)
 
