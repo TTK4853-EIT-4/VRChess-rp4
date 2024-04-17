@@ -33,12 +33,12 @@ class GameHelper:
         return self.sio.connected
     
     def player_joined(self, room_owner, room_id, room_opponent):
-        self._room = GameRoom(room_owner)
-        self._room.room_id = room_id
+        if self._room is None or self._room.room_id != room_id:
+            self._room = GameRoom(room_owner)
+            self._room.room_id = room_id
+            self._room.player_mode = PlayerMode.STANDARD   
         self._room.room_opponent = room_opponent
-        if self._room.opponent is None:
-            return 
-        self._game_started = True
+        self._game_started = True           
     
     def is_game_started(self):
         return self._game_started
@@ -57,13 +57,15 @@ class GameHelper:
     def room_created(self, data):
         print(f'Room created: {data}')
         d = json.loads(data)
+        print(f'Room data loaded: {d}')
         self._room = GameRoom(d['room_owner'])
         self._room.room_id = d['room_id']
+        self._room.player_mode = PlayerMode(d['player_mode'])
         self.sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
         if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
             print('Room created for two players on the same board')
             self._room.add_opponent('Board_player_2')
-            self.player_joined(self._room.room_owner, self._room.room_id, self.__room.room_opponent)
+            self._game_started = True
 
     def set_authenticated(self):
         self._authenticated = True
