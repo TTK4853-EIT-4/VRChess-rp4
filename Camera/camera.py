@@ -58,7 +58,7 @@ def initialize_camera() -> Picamera2:
 
 
 def vision2000(imgStr:str) -> list[list[str]]:
-    treshold = 0.3
+    treshold = 0.2
 
     squares = {
         "boxes": [
