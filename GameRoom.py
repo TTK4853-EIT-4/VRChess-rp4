@@ -101,6 +101,15 @@ class GameRoom:
     def serialize(self):
         return json.dumps(self, cls=GameRoomJSONEncoder)
     
+    def get_move(self, fen):
+        for move in self.game.legal_moves:
+            self.game.push(move)
+            if self.game.board_fen() == fen:
+                return move
+            _ = self.game.pop()
+        else:
+            return None
+    
 class GameRoomJSONEncoder(JSONEncoder):
     def default(self, obj): 
         if isinstance(obj, GameRoom):
