@@ -14,10 +14,15 @@ class PlayerMode(Enum):
     BOARD_TWO_PLAYER = 2 # Two players on the same physical board
     # For BOARD_TWO_PLAYERS the opponent will be set by username on the room creation
 
+class SideColor(Enum):
+    WHITE = 0
+    BLACK = 1
+
 class GameRoom:
     def __init__(self, room_owner):
         self.room_id = str(uuid.uuid1())
         self.room_owner = room_owner
+        self.room_owner_side = SideColor.WHITE
         self.room_opponent = None
         self.observers = []
         self.game = chess.Board()
@@ -47,10 +52,14 @@ class GameRoom:
         self.game = chess.Board()
         self.game_status = GameStatus.STARTED
 
-    def end_game(self, winner, loser, draw):
-        self.game_winner = winner
-        self.game_loser = loser
-        self.game_draw = draw
+    def end_game(self, winnerSide = None):
+        if winnerSide is not None :
+            if winnerSide == self.room_owner_side:
+                self.game_winner = self.room_owner
+                self.game_loser = self.room_opponent
+            else:
+                self.game_winner = self.room_opponent
+                self.game_loser = self.room_owner
         self.game_status = GameStatus.ENDED
 
     def get_game_state(self):
@@ -70,9 +79,6 @@ class GameRoom:
 
     def get_game_loser(self):
         return self.game_loser
-
-    def get_game_draw(self):
-        return self.game_draw
 
     def get_players(self):
         return self.room_owner, self.room_opponent
@@ -95,52 +101,20 @@ class GameRoom:
     def serialize(self):
         return json.dumps(self, cls=GameRoomJSONEncoder)
     
-    def get_move(self, fen):
-        for move in self.game.legal_moves:
-            self.game.push(move)
-            if self.game.board_fen() == fen:
-                return move
-            _ = self.game.pop()
-        else:
-            return None
-    
 class GameRoomJSONEncoder(JSONEncoder):
     def default(self, obj): 
         if isinstance(obj, GameRoom):
             return {
                 "room_id": obj.room_id,
                 "room_owner": obj.room_owner.serialize() if obj.room_owner else None,
+                "room_owner_side" : obj.room_owner_side.value ,
                 "room_opponent": obj.room_opponent.serialize() if obj.room_opponent else None,
                 "observers": [observer.serialize() for observer in obj.observers],
                 "game_status": obj.game_status.value,
-                "game_winner": obj.game_winner,
-                "game_loser": obj.game_loser,
+                "game_winner": obj.game_winner.serialize() if obj.game_winner else None,
+                "game_loser": obj.game_loser.serialize() if obj.game_loser else None,
                 "game": obj.game.fen() if obj.game else None,
                 "player_mode": obj.player_mode
             }
         # Let the base class default method raise the TypeError
         return JSONEncoder.default(self, obj)
-    
-nums = {1:"a", 2:"b", 3:"c", 4:"d", 5:"e", 6:"f", 7:"g", 8:"h"}
-def get_uci(board1, board2, who_moved):
-    str_board = str(board1).split("\n")
-    str_board2 = str(board2).split("\n")
-    move = ""
-    flip = False
-    if who_moved == "w":
-        for i in range(8)[::-1]:
-            for x in range(15)[::-1]:
-                if str_board[i][x] != str_board2[i][x]:
-                    if str_board[i][x] == "." and move == "":
-                        flip = True
-                    move+=str(nums.get(round(x/2)+1))+str(9-(i+1))
-    else:
-        for i in range(8):
-            for x in range(15):
-                if str_board[i][x] != str_board2[i][x]:
-                    if str_board[i][x] == "." and move == "":
-                        flip = True
-                    move+=str(nums.get(round(x/2)+1))+str(9-(i+1))
-    if flip:
-        move = move[2]+move[3]+move[0]+move[1]
-    return move

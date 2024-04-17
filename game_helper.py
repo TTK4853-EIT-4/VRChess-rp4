@@ -1,6 +1,6 @@
 from enum import Enum
 import socketio
-from GameRoom import GameRoom
+from GameRoom import GameRoom, GameStatus
 import chess
 import json
 
@@ -50,10 +50,23 @@ class GameHelper:
             return {'status': 'error', 'message': 'Invalid move'}
         print(f'Pushing move: {Nf3}')
         self._room.game.push(Nf3)
+        self.validate_outcome()
         return_data = {'room_id': self._room.room_id, 'move': {'fen': self._room.game.fen()}}
         self.last_move = None
         self.sio.emit('piece_move_notify', return_data, room=self._room.room_id)
         return {'status': 'success', 'data': return_data}
+    
+    def validate_outcome(self):
+        outcome = self._room.game.outcome()
+        if outcome is not None:
+            self._game_over = True
+            if outcome.winner == chess.WHITE:
+                self._room.game_winner = self._room.room_owner
+                self._room.game_loser = self._room.room_opponent
+            else:
+                self._room.game_winner = self._room.room_opponent
+                self._room.game_loser = self._room.room_owner
+            self._room.game_status = GameStatus.ENDED
     
     def get_move(self):
         return self.last_move
@@ -77,6 +90,7 @@ class GameHelper:
     def move_piece(self, move):
         Nf3 = chess.Move.from_uci(move['source'] + move['target'])
         self._room.game.push(Nf3)
+        self.validate_outcome()
         self.last_move = move
 
     def login(self, username, password):
