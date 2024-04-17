@@ -46,13 +46,13 @@ class GameHelper:
     def piece_move(self, fen):
         print(self._room.game)
         print(f'Piece move: {fen}')
-        Nf3 = self._room.get_move(fen)
-        if Nf3 is None:
-            return {'status': 'error', 'message': 'Invalid move'}
-        print(f'Pushing move: {Nf3}')
-        self._room.game.push(Nf3)
-        self.validate_outcome()
-        return_data = {'room_id': self._room.room_id, 'move': {'fen': self._room.game.fen()}}
+        # Nf3 = self._room.get_move(fen)
+        # if Nf3 is None:
+        #     return {'status': 'error', 'message': 'Invalid move'}
+        # print(f'Pushing move: {Nf3}')
+        # self._room.game.push(Nf3)
+        # self.validate_outcome()
+        return_data = {'room_id': self._room.room_id, 'move': {'fen': fen}}
         self.last_move = None
         self.sio.emit('piece_move_notify', return_data, room=self._room.room_id)
         return {'status': 'success', 'data': return_data}
