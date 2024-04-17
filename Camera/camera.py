@@ -690,7 +690,7 @@ def vision2000(imgStr:str) -> list[list[str]]:
         chessBoard.append([squareMap[chr(65+j)+str(8-i)][0] for j in range(8)])
     #Print the matrix:
 
-    # print(chessBoard)
+    print(chessBoard)
 
 
     #Uppercase is white, lowercase is black
