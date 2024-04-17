@@ -70,7 +70,7 @@ class GameHelper:
                     self._room.game_loser = self._room.room_owner
                     self._room.end_game(winnerSide = SideColor.BLACK)
             else:
-                self._room.end_game()
+                self._room.game_draw = True
             self._room.game_status = GameStatus.ENDED
     
     def get_move(self):
