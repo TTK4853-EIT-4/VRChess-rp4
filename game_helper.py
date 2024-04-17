@@ -44,7 +44,11 @@ class GameHelper:
         return self._game_started
     
     def piece_move(self, fen):
+        print(f'Piece move: {fen}')
         Nf3 = self._room.get_move(fen)
+        if Nf3 is None:
+            return {'status': 'error', 'message': 'Invalid move'}
+        print(f'Pushing move: {Nf3}')
         self._room.game.push(Nf3)
         return_data = {'room_id': self._room.room_id, 'move': {'fen': self._room.game.fen()}}
         self.last_move = None

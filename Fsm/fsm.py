@@ -155,8 +155,11 @@ def wait_for_server_move(fsm: FSM, bio: BoardIO, helper: GameHelper, mc: MotionC
         move = helper.get_move()
         if move:
             mc.request_move(move)
-            cc.analyze_board()
+            while cc.analyze_board() != move['fen']:
+                bio.led_blink(COLOR.BLUE, 1)
+                sleep(1)
             fsm.set_state(states.WAIT_FOR_USER_MOVE)
+            bio.led_blink(COLOR.GREEN, 3)
         else:
             fsm.set_state(states.WAIT_FOR_SERVER_MOVE)
     return fsm, bio, helper, mc, cc
