@@ -1,6 +1,6 @@
 from enum import Enum
 import socketio
-from GameRoom import GameRoom, GameStatus
+from GameRoom import GameRoom, GameStatus, SideColor
 import chess
 import json
 
@@ -60,12 +60,17 @@ class GameHelper:
         outcome = self._room.game.outcome()
         if outcome is not None:
             self._game_over = True
-            if outcome.winner == chess.WHITE:
-                self._room.game_winner = self._room.room_owner
-                self._room.game_loser = self._room.room_opponent
+            if outcome.termination == chess.Termination.CHECKMATE:
+                if outcome.winner == chess.WHITE:
+                    self._room.game_winner = self._room.room_owner
+                    self._room.game_loser = self._room.room_opponent
+                    self._room.end_game(winnerSide = SideColor.WHITE)
+                else:
+                    self._room.game_winner = self._room.room_opponent
+                    self._room.game_loser = self._room.room_owner
+                    self._room.end_game(winnerSide = SideColor.BLACK)
             else:
-                self._room.game_winner = self._room.room_opponent
-                self._room.game_loser = self._room.room_owner
+                self._room.end_game()
             self._room.game_status = GameStatus.ENDED
     
     def get_move(self):
