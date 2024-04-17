@@ -30,6 +30,10 @@ class WebSocketController:
     @sio.on('room_created')
     def room_created(data):
         print('Room created:', data)
+        if data['status'] == 'success':
+            helper.room_created(data['data'])
+        else:
+            helper.reset()
 
     @sio.on('room_updated_')
     def room_updated(data):
