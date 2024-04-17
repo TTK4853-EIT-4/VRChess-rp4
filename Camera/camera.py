@@ -34,7 +34,7 @@ class CameraController:
     
     def _take_picture(self):
         self.picture = send_nudes(self.cam)
-        newcrop(self.picture)
+        self.picture = newcrop(self.picture)
     
     def _computer_vision(self):
         """Do all the computer vision stuff"""
@@ -796,6 +796,7 @@ def newcrop(img):
 
     cv2.imwrite("crop_img.jpg", warped)
     cv2.waitKey(0)
+    return "crop_img.jpg"
 
 
 
