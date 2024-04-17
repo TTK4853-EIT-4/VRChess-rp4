@@ -77,6 +77,7 @@ class GameHelper:
         return self.last_move
 
     def room_created(self, data):
+        print(data.room_id)
         print(f'Room created: {data}')
         d = json.loads(data)
         print(f'Room data loaded: {d}')
