@@ -59,14 +59,14 @@ def main():
             state_machine, bio, helper = fsm.wait_for_user_input(state_machine, bio, helper)
         
         elif state_machine.state == fsm.states.WAIT_FOR_SERVER_MOVE:
-            state_machine = fsm.wait_for_server_move(state_machine, bio, helper, mctrl, cc)
+            state_machine, bio, helper, mctrl, cc = fsm.wait_for_server_move(state_machine, bio, helper, mctrl, cc)
             pass
         
         elif state_machine.state == fsm.states.WAIT_FOR_USER_MOVE:
-            state_machine = fsm.wait_for_user_move(state_machine, bio, helper, cc)
+            state_machine, bio, helper, cc = fsm.wait_for_user_move(state_machine, bio, helper, cc)
         
         elif state_machine.state == fsm.states.FINISHED:
-            state_machine = fsm.finished(state_machine, bio, helper, mctrl, cc)
+            state_machine, bio, helper, mctrl, cc = fsm.finished(state_machine, bio, helper, mctrl, cc)
             pass
         
         i+=1
