@@ -39,8 +39,9 @@ class WebSocketController:
 
     @sio.on('room_updated_')
     def room_updated(data):
-        if data['room_opponent'] is not None:
-            helper.player_joined(data['room_owner'], data['room_id'], data['room_opponent'])
+        d = json.loads(data)
+        if d['room_opponent'] is not None:
+            helper.player_joined(d['room_owner'], d['room_id'], d['room_opponent'])
         print('Room updated:', data)
  
     @sio.on('authenticated')
