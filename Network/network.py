@@ -1,3 +1,4 @@
+import json
 import socketio
 from time import sleep
 from game_helper import GameHelper
@@ -30,8 +31,9 @@ class WebSocketController:
     @sio.on('room_created')
     def room_created(data):
         print('Room created:', data)
-        if data['status'] == 'success':
-            helper.room_created(data['data'])
+        d = json.loads(data)
+        if d is not None:
+            helper.room_created(d)
         else:
             helper.reset()
 

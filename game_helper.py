@@ -77,13 +77,10 @@ class GameHelper:
         return self.last_move
 
     def room_created(self, data):
-        print(data.room_id)
-        print(f'Room created: {data}')
-        d = json.loads(data)
-        print(f'Room data loaded: {d}')
-        self._room = GameRoom(d['room_owner'])
-        self._room.room_id = d['room_id']
-        self._room.player_mode = PlayerMode(d['player_mode'])
+        print(f'Room data loaded: {data}')
+        self._room = GameRoom(data['room_owner'])
+        self._room.room_id = data['room_id']
+        self._room.player_mode = PlayerMode(data['player_mode'])
         self.sio.emit('subscribe_to_room', data={'room_id': self._room.room_id})
         if self._room.player_mode == PlayerMode.BOARD_TWO_PLAYER:
             print('Room created for two players on the same board')
